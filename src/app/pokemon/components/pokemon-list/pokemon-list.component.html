@@ -1,21 +1,22 @@
 <div class="container">
-    <mat-card class="title-card" appearance="outlined">
-        <h1><strong>Lista de Pokemons:</strong></h1>
-    </mat-card>
-      <div class="pokemon-list">
-        <mat-grid-list [cols]="5" rowHeight="220px" gutterSize="16px" class="grid-responsive">
+  <mat-card class="title-card" appearance="outlined">
+      <h1><strong>Lista de Pokemons:</strong></h1>
+  </mat-card>
+  <div class="pokemon-list">
+      <mat-grid-list [cols]="cols" rowHeight="220px" gutterSize="16px">
           <mat-grid-tile *ngFor="let pokemon of pokemons" (click)="openPokemonModal(pokemon)">
-            <mat-card class="pokemon-card" appearance="outlined">
-              <mat-card-content class="card-content">
-                <img [src]="pokemon.image" alt="{{ pokemon.name }}" />
-                <h2>{{ pokemon.name }}</h2>
-              </mat-card-content>
-            </mat-card>
+              <mat-card class="pokemon-card" appearance="outlined">
+                  <mat-card-content class="card-content">
+                      <img [src]="pokemon.image" alt="{{ pokemon.name }}" />
+                      <h2>{{ pokemon.name }}</h2>
+                  </mat-card-content>
+              </mat-card>
           </mat-grid-tile>
-        </mat-grid-list>
-        <mat-paginator 
-        [length]="totalPokemons" 
-        [pageSize]="20" 
-        (page)="onPageChange($event)"></mat-paginator>
-      </div>
+      </mat-grid-list>
+      <mat-paginator 
+          [length]="totalPokemons" 
+          [pageSize]="20" 
+          (page)="onPageChange($event)">
+      </mat-paginator>
+  </div>
 </div>

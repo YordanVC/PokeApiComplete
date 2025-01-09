@@ -1,22 +1,22 @@
 /* Establecer tamaño fijo para el modal */
 .mat-dialog-container {
-  max-width: 100% !important; /* Evita que se haga más grande que la pantalla */
-  max-height: 100% !important; /* Evita que se haga más alto que la pantalla */
-  overflow: hidden;  /* Evitar que el modal cambie de tamaño por el contenido */
+  max-width: 100% !important; 
+  max-height: 100% !important; 
+  overflow: hidden;  
 }
   /* Estilo general para el contenido del modal */
   mat-dialog-content {
     padding: 20px;
-    overflow-y: auto;  /* Habilita desplazamiento vertical dentro del contenido */
+    overflow-y: auto;  
   }
   
   /* Estilo de la imagen del Pokémon */
   .image-container {
-    display: flex; /* Flexbox para centrar contenido */
-    justify-content: center; /* Centrar horizontalmente */
-    align-items: center; /* Centrar verticalmente */
-    height: 40vh; /* Altura relativa al modal */
-    margin-bottom: 20px; /* Espacio entre la imagen y el contenido siguiente */
+    display: flex; 
+    justify-content: center; 
+    align-items: center; 
+    height: 35vh; 
+    margin-bottom: 20px; 
   }
   
   .image-container img {
@@ -50,8 +50,8 @@
     padding: 15px;
     border-radius: 10px;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-    max-height: 400px;  /* Limita el alto del contenido */
-    overflow-y: auto;  /* Habilita el desplazamiento si el contenido es demasiado grande */
+    max-height: 400px;  
+    overflow-y: auto; 
   }
   
   mat-tab-body p,
@@ -61,17 +61,15 @@
     margin: 10px 0;
   }
   
-  /* Estilo de los labels de estadísticas */
   mat-tab-body strong {
     color: #673ab7;
   }
   
-  /* Estilo para el título del modal */
   h1[mat-dialog-title] {
     text-align: center;
     font-size: 24px;
     font-weight: bold;
-    color: #673ab7;  /* Color llamativo para el título */
+    color: #673ab7;  
     margin-bottom: 20px;
   }
   mat-dialog-actions {
