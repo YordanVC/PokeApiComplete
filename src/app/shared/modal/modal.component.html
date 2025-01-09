@@ -1,0 +1,44 @@
+<div mat-dialog-container>
+  <h1 mat-dialog-title>{{ pokemon?.name }}</h1>
+
+<div mat-dialog-content>
+  <div class="image-container">
+    <img [src]="pokemon?.sprites?.front_default" alt="{{ pokemon?.name }}" />
+  </div>
+  
+  <div>
+    <strong>Type: </strong>
+    <button mat-raised-button *ngFor="let type of pokemon?.types">{{ type?.type?.name }}</button>
+  </div>
+  <mat-tab-group>
+    <mat-tab label="About">
+      <div>
+        <p><strong>Description:</strong><br>{{ about }}</p>
+        <br><strong>Abilities:</strong><br>
+      </div>
+      <div *ngFor="let ability of pokemon?.abilities">
+        <li>{{ ability?.ability?.name }}</li>
+      </div>
+    </mat-tab>
+    <mat-tab label="Basic Stats">
+      <div *ngFor="let stat of stats">
+        <strong>{{ stat.stat.name }}:</strong> {{ stat.base_stat }}
+      </div>
+    </mat-tab>
+    <mat-tab label="Evolution">
+      <div *ngFor="let evol of evolution">
+        <li>{{ evol || 'Evolution data not available' }}</li>
+      </div>
+    </mat-tab>
+    <mat-tab label="Moves">
+      <div *ngFor="let move of moves">
+       <li>{{ move }}</li> 
+      </div>
+    </mat-tab>
+  </mat-tab-group>
+</div>
+<mat-dialog-actions>
+  <button mat-button color="warn" mat-dialog-close>Close</button>
+</mat-dialog-actions>
+
+</div>

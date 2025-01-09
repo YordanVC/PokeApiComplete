@@ -1,0 +1,20 @@
+.toolbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    width: 100%; /* Asegúrate de que el toolbar ocupe todo el ancho */
+    padding: 0 16px; /* Añadir padding para un mejor espaciado */
+}
+.custom-icon {
+    width: 50px; /* Ajusta el tamaño según sea necesario */
+    height: 50px;
+    margin-right: 8px; /* Espaciado a la derecha del ícono */
+}
+.title{
+    font-size: 1.5em; /* Tamaño de fuente */
+    font-weight: bold; /* Negrita */
+    color: #fff; /* Color de fuente */
+    margin: 0; /* Elimina el margen */
+    padding: 0; /* Elimina el relleno */
+}
