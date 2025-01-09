@@ -4,11 +4,12 @@ import { MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { CommonModule } from '@angular/common';
 import { PokemonService } from '../../pokemon.service';
 import { EvolutionChain, Pokemon, Stat } from '../../models/pokemon';
+import { PokemonStatsComponent } from '../pokemon-stats/pokemon-stats.component';
 
 @Component({
   selector: 'app-modal',
   standalone: true,
-  imports: [MaterialsModule,CommonModule],
+  imports: [MaterialsModule,CommonModule,PokemonStatsComponent],
   templateUrl: './modal.component.html',
   styleUrl: './modal.component.css'
 })
@@ -27,7 +28,6 @@ export class ModalComponent {
 
   ngOnInit() {
     // Asegúrate de que el id sea un número
-    console.log('ID recibido:', this.data.id); 
     const pokemonId = Number(this.data.id);
     this.loadPokemonDetails(pokemonId);
   }
