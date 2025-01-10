@@ -1,0 +1,47 @@
+.error-container {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    font-family: Arial, sans-serif;
+    background-color: #f8f9fa;
+    text-align: center;
+    padding: 20px;
+  }
+  
+  .error-number {
+    font-size: 120px;
+    font-weight: bold;
+    color: #ff4757;
+    margin: 0;
+    line-height: 1;
+  }
+  
+  .error-text {
+    font-size: 24px;
+    color: #2f3542;
+    margin: 20px 0;
+  }
+  
+  .shopping-cart {
+    font-size: 80px;
+    color: #ff4757;
+    margin: 20px 0;
+  }
+  
+  .back-button {
+    background-color: #ff4757;
+    color: white;
+    padding: 12px 30px;
+    border: none;
+    border-radius: 25px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    text-decoration: none;
+  }
+  
+  .back-button:hover {
+    background-color: #ff2e43;
+  }
