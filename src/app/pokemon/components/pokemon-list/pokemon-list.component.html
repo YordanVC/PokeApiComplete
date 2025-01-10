@@ -7,7 +7,9 @@
     <div class="filter-container">
       <mat-form-field class="filter-input">
         <mat-label>Filter</mat-label>
-        <input matInput formControlName="filterValue" [type]="inputType" (keyup)="applyFilter($event)">
+        <input matInput formControlName="filterValue" 
+        [type]="inputType" 
+        (keyup)="applyFilter($event)">
       </mat-form-field>
   
       <mat-form-field class="filter-input">

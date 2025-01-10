@@ -107,8 +107,14 @@ export class PokemonListComponent implements OnInit, OnDestroy {
     });
   }
   applyFilter(event: Event) {
-    const filterValue = (event.target as HTMLInputElement).value.trim().toLowerCase();
+    const input = event.target as HTMLInputElement;
+    let filterValue = input.value.trim().toLowerCase();
 
+    // Si es tipo texto, eliminar cualquier carácter que no sea letra
+    if (this.inputType === 'text') {
+      filterValue = filterValue.replace(/[^a-zA-ZñÑáéíóúÁÉÍÓÚ\s]/g, '');
+      input.value = filterValue; // Actualiza el valor del input
+    }
     if (filterValue) {
       // Llama a getPokemonByNameOrId para buscar en la API
       this.pokemonService.getPokemonByNameOrId(filterValue).subscribe(
@@ -133,6 +139,15 @@ export class PokemonListComponent implements OnInit, OnDestroy {
     }
   }
 
-
+  validateInput(event: KeyboardEvent): boolean {
+    // Si el tipo de input es número, permitir solo números
+    if (this.inputType === 'number') {
+      return /[0-9]/.test(event.key) || event.key === 'Backspace' || event.key === 'Delete';
+    }
+    
+    // Si es texto, permitir solo letras (incluyendo ñ y letras acentuadas)
+    const pattern = /^[a-zA-ZñÑáéíóúÁÉÍÓÚ\s]$/;
+    return pattern.test(event.key) || event.key === 'Backspace' || event.key === 'Delete';
+  }
 
 }
