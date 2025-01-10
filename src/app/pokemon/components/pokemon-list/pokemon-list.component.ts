@@ -6,6 +6,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { ModalComponent } from '../../../shared/modal/modal.component';
 import { Subject, takeUntil } from 'rxjs';
 import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
+import { FormBuilder, FormGroup } from '@angular/forms';
 
 @Component({
   selector: 'app-pokemon-list',
@@ -14,15 +15,20 @@ import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
   templateUrl: './pokemon-list.component.html',
   styleUrl: './pokemon-list.component.css'
 })
-export class PokemonListComponent implements OnInit, OnDestroy{
+export class PokemonListComponent implements OnInit, OnDestroy {
   pokemons: any[] = [];
   totalPokemons = 0;
   cols: number = 5;
   private destroy$ = new Subject<void>();
-  
+  filterValue: string = '';
+  filterBy: string = 'name';
+  filterForm: FormGroup;
+  inputType: string = 'text'; // Tipo de input inicial
+
   constructor(
     private pokemonService: PokemonService,
     private dialog: MatDialog,
+    private fb: FormBuilder,
     private breakpointObserver: BreakpointObserver
   ) {
     this.breakpointObserver
@@ -47,10 +53,25 @@ export class PokemonListComponent implements OnInit, OnDestroy{
           this.cols = 1;
         }
       });
+
+    this.filterForm = this.fb.group({
+      filterValue: [''],
+      filterBy: ['name']
+    });
   }
 
   ngOnInit() {
     this.loadPokemons(0);
+    // Escuchar los cambios en el select para actualizar el tipo de input
+    this.filterForm.get('filterBy')?.valueChanges.subscribe(value => {
+      if (value === 'id') {
+        this.inputType = 'number'; // Cambiar a tipo número
+      } else {
+        this.inputType = 'text'; // Cambiar a tipo texto
+      }
+      // Limpiar el valor del filtro cuando se cambia el "filterBy"
+      this.filterForm.get('filterValue')?.setValue('');
+    });
   }
 
   ngOnDestroy(): void {
@@ -69,6 +90,7 @@ export class PokemonListComponent implements OnInit, OnDestroy{
     });
   }
 
+
   onPageChange(event: any) {
     const offset = event.pageIndex * event.pageSize;
     this.loadPokemons(offset);
@@ -84,4 +106,33 @@ export class PokemonListComponent implements OnInit, OnDestroy{
       console.log('El modal se ha cerrado', result);
     });
   }
+  applyFilter(event: Event) {
+    const filterValue = (event.target as HTMLInputElement).value.trim().toLowerCase();
+
+    if (filterValue) {
+      // Llama a getPokemonByNameOrId para buscar en la API
+      this.pokemonService.getPokemonByNameOrId(filterValue).subscribe(
+        (pokemon) => {
+          // Si se encuentra el Pokémon, lo agregamos a la lista
+          this.pokemons = [{
+            id: pokemon.id,
+            name: pokemon.name,
+            image: pokemon.sprites.front_default
+          }];
+          this.totalPokemons = 1; // Solo un resultado
+        },
+        (error) => {
+          console.error('No se encontró el Pokémon:', error);
+          this.pokemons = []; // Vacía la lista si no se encuentra
+          this.totalPokemons = 0;
+        }
+      );
+    } else {
+      // Si el filtro está vacío, recargamos los primeros 20 Pokémon
+      this.loadPokemons(0);
+    }
+  }
+
+
+
 }

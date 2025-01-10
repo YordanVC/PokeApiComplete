@@ -14,14 +14,36 @@
     color: #673ab7;
     text-transform: capitalize;
 }
+.filter-container {
+  margin: 10px;
+  display: flex;
+  align-items: flex-start;
+  gap: 5px;
+}
+
+.filter-input {
+  width: 100%;
+}
+
+.filter-button {
+  margin-top: 0px; /* Ajustado de -14px a -4px para bajar el botón */
+}
+
+button {
+  width: 56px;
+  height: 56px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+::ng-deep .mat-form-field {
+  margin-bottom: 0;
+  height: 56px;
+}
+
 .pokemon-list {
     padding: 16px;
-  }
-  
-  .grid-responsive {
-    display: grid;
-    grid-template-columns: repeat(5, 1fr);
-    gap: 16px;
   }
   
   .pokemon-card {

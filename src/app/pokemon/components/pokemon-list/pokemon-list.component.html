@@ -2,6 +2,32 @@
   <mat-card class="title-card" appearance="outlined">
       <h1><strong>Lista de Pokemons:</strong></h1>
   </mat-card>
+
+  <form [formGroup]="filterForm">
+    <div class="filter-container">
+      <mat-form-field class="filter-input">
+        <mat-label>Filter</mat-label>
+        <input matInput formControlName="filterValue" [type]="inputType" (keyup)="applyFilter($event)">
+      </mat-form-field>
+  
+      <mat-form-field class="filter-input">
+        <mat-label>Filter by</mat-label>
+        <mat-select formControlName="filterBy">
+          <mat-option value="id">Id</mat-option>
+          <mat-option value="name">Name</mat-option>
+        </mat-select>
+      </mat-form-field>
+      <div class="filter-button">
+        <button  mat-raised-button type="submit" [disabled]="filterForm.invalid">
+            <mat-icon>search</mat-icon>
+          </button>
+      </div>
+    </div>
+  </form>
+  
+
+  
+  
   <div class="pokemon-list">
       <mat-grid-list [cols]="cols" rowHeight="220px" gutterSize="16px">
           <mat-grid-tile *ngFor="let pokemon of pokemons" (click)="openPokemonModal(pokemon)">
@@ -13,7 +39,7 @@
               </mat-card>
           </mat-grid-tile>
       </mat-grid-list>
-      <mat-paginator 
+      <mat-paginator *ngIf="totalPokemons > 2"
           [length]="totalPokemons" 
           [pageSize]="20" 
           (page)="onPageChange($event)">

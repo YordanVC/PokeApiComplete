@@ -17,6 +17,10 @@ export class PokemonService {
   getPokemons(offset: number): Observable<any> {
     return this.http.get<any>(`${this.apiUrl}?offset=${offset}&limit=20`);
   }
+  // Obtener un Pokémon específico por nombre o ID
+  getPokemonByNameOrId(query: string): Observable<any> {
+    return this.http.get<any>(`${this.apiUrl}/${query.toLowerCase()}`);
+  }
 
   // Obtener detalles de un pokemon
   getPokemonDetails(id: number): Observable<Pokemon> {
