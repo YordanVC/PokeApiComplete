@@ -27,10 +27,12 @@
     </div>
   </form>
   
-
-  
-  
   <div class="pokemon-list">
+    <!-- Mostrar mensaje si no hay Pokémon -->
+    <div *ngIf="pokemons.length === 0" class="no-results">
+      <p>Pokemon no encontrado.</p>
+      <span>verifique si el id o nombre es correcto</span>
+    </div>
       <mat-grid-list [cols]="cols" rowHeight="220px" gutterSize="16px">
           <mat-grid-tile *ngFor="let pokemon of pokemons" (click)="openPokemonModal(pokemon)">
               <mat-card class="pokemon-card" appearance="outlined">

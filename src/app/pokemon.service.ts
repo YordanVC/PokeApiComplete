@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { forkJoin, Observable, switchMap } from 'rxjs';
+import { forkJoin, map, Observable, switchMap } from 'rxjs';
 import { Pokemon, Species } from './models/pokemon';
 
 @Injectable({
@@ -10,12 +10,22 @@ export class PokemonService {
   private apiUrl = 'https://pokeapi.co/api/v2/pokemon';
   private apiSpeciesUrl = 'https://pokeapi.co/api/v2/pokemon-species';
   private apiEvolutionUrl = 'https://pokeapi.co/api/v2/evolution-chain';
+  private apiUrlImages= 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/';
 
   constructor(private http: HttpClient) { }
 
   // Obtener lista de pokemons
   getPokemons(offset: number): Observable<any> {
-    return this.http.get<any>(`${this.apiUrl}?offset=${offset}&limit=20`);
+    return this.http.get<any>(`${this.apiUrl}?offset=${offset}&limit=20`).pipe(
+      map((data) => ({
+        total: data.count,
+        pokemons: data.results.map((pokemon: any, index: number) => ({
+          id: index + offset + 1,
+          name: pokemon.name,
+          image: `${this.apiUrlImages}/${index + offset + 1}.png`,
+        }))
+      }))
+    );
   }
   // Obtener un Pokémon específico por nombre o ID
   getPokemonByNameOrId(query: string): Observable<any> {

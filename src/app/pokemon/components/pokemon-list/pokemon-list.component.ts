@@ -62,15 +62,22 @@ export class PokemonListComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.loadPokemons(0);
-    // Escuchar los cambios en el select para actualizar el tipo de input
-    this.filterForm.get('filterBy')?.valueChanges.subscribe(value => {
-      if (value === 'id') {
-        this.inputType = 'number'; // Cambiar a tipo número
-      } else {
-        this.inputType = 'text'; // Cambiar a tipo texto
+  
+    // Escuchar cambios en el valor del filtro
+    this.filterForm.get('filterValue')?.valueChanges.subscribe((value) => {
+      if (this.inputType === 'text') {
+        // Limpiar cualquier carácter no permitido para texto
+        const cleanedValue = value.replace(/[^a-zA-ZñÑáéíóúÁÉÍÓÚ\s]/g, '');
+        if (value !== cleanedValue) {
+          this.filterForm.get('filterValue')?.setValue(cleanedValue, { emitEvent: false });
+        }
       }
-      // Limpiar el valor del filtro cuando se cambia el "filterBy"
-      this.filterForm.get('filterValue')?.setValue('');
+    });
+  
+    // Cambiar el tipo de input al cambiar el filtro
+    this.filterForm.get('filterBy')?.valueChanges.subscribe((value) => {
+      this.inputType = value === 'id' ? 'number' : 'text';
+      this.filterForm.get('filterValue')?.setValue(''); // Limpiar el input
     });
   }
 
@@ -79,16 +86,18 @@ export class PokemonListComponent implements OnInit, OnDestroy {
     this.destroy$.complete();
   }
 
-  loadPokemons(offset: number) {
-    this.pokemonService.getPokemons(offset).subscribe((data) => {
-      this.pokemons = data.results.map((pokemon: any, index: number) => ({
-        id: index + offset + 1,
-        name: pokemon.name,
-        image: `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${index + offset + 1}.png`
-      }));
-      this.totalPokemons = data.count;
+  loadPokemons(offset: number): void {
+    this.pokemonService.getPokemons(offset).subscribe({
+      next: (data) => {
+        this.pokemons = data.pokemons;
+        this.totalPokemons = data.total;
+      },
+      error: (err) => {
+        console.error('Error al cargar los Pokémon:', err);
+      }
     });
   }
+  
 
 
   onPageChange(event: any) {
@@ -139,15 +148,21 @@ export class PokemonListComponent implements OnInit, OnDestroy {
     }
   }
 
+  //validar input
   validateInput(event: KeyboardEvent): boolean {
-    // Si el tipo de input es número, permitir solo números
-    if (this.inputType === 'number') {
-      return /[0-9]/.test(event.key) || event.key === 'Backspace' || event.key === 'Delete';
+    const inputType = this.inputType;
+  
+    if (inputType === 'number') {
+      // Permitir solo números, backspace y delete
+      return /[0-9]/.test(event.key) || ['Backspace', 'Delete'].includes(event.key);
     }
-    
-    // Si es texto, permitir solo letras (incluyendo ñ y letras acentuadas)
-    const pattern = /^[a-zA-ZñÑáéíóúÁÉÍÓÚ\s]$/;
-    return pattern.test(event.key) || event.key === 'Backspace' || event.key === 'Delete';
+  
+    if (inputType === 'text') {
+      // Permitir solo letras, espacios, ñ y caracteres acentuados
+      return /^[a-zA-ZñÑáéíóúÁÉÍÓÚ\s]$/.test(event.key) || ['Backspace', 'Delete'].includes(event.key);
+    }
+  
+    return true;
   }
 
 }
