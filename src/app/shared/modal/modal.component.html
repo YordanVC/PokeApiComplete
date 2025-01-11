@@ -1,6 +1,6 @@
 <div mat-dialog-container class="pokemon-modal" [ngStyle]="getBackgroundStyle()">
   <div class="modal-content" *ngIf="!isLoading && pokemon">
-    <h1 mat-dialog-title [style.color]="mainColor">{{ pokemon.name }}</h1>
+    <h1 class="title-modal" mat-dialog-title [style.color]="mainColor">{{ pokemon.name }}</h1>
 
     <mat-dialog-content>
       <div class="image-container">
