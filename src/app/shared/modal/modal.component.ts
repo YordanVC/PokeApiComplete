@@ -1,9 +1,9 @@
-import { Component, Inject } from '@angular/core';
+import { Component, Inject, OnInit } from '@angular/core';
 import { MaterialsModule } from '../../materials/materials.module';
 import { MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { CommonModule } from '@angular/common';
 import { PokemonService } from '../../pokemon.service';
-import { EvolutionChain, Pokemon, Stat } from '../../models/pokemon';
+import {Pokemon} from '../../models/pokemon';
 import { PokemonStatsComponent } from '../pokemon-stats/pokemon-stats.component';
 
 @Component({
@@ -13,54 +13,112 @@ import { PokemonStatsComponent } from '../pokemon-stats/pokemon-stats.component'
   templateUrl: './modal.component.html',
   styleUrl: './modal.component.css'
 })
-export class ModalComponent {
+export class ModalComponent implements OnInit {
   pokemon: Pokemon | undefined;
   about: string = '';
-  stats: Stat[] = [];
+  stats: { base_stat: number; stat: { name: string } }[] = [];
   evolution: string[] = [];
+  evolutionDetails: { name: string, sprite: string }[] = [];
   moves: string[] = [];
-  abilities: string[] = []; 
+  abilities: string[] = [];
+  isLoading: boolean = true;
+  mainColor: string = '';
+
+  private colorMap: { [key: string]: string } = {
+    black: '#303030',
+    blue: '#3B4CCA',
+    brown: '#826647',
+    gray: '#808080',
+    green: '#3DB731',
+    pink: '#FDB9E9',
+    purple: '#7B62A3',
+    red: '#FF0000',
+    white: '#FFFFFF',
+    yellow: '#FFDE00'
+  };
 
   constructor(
-    @Inject(MAT_DIALOG_DATA) public data: { id: string },
+    @Inject(MAT_DIALOG_DATA) public data: { id: number },
     private pokemonService: PokemonService
   ) {}
 
   ngOnInit() {
-    // Asegúrate de que el id sea un número
     const pokemonId = Number(this.data.id);
     this.loadPokemonDetails(pokemonId);
   }
 
   loadPokemonDetails(pokemonId: number) {
-    this.pokemonService.getPokemonFullDetails(pokemonId).subscribe(response => {
-      console.log(response);  // Verifica la respuesta real del servidor
-      this.pokemon = response.details;
-      this.stats = response.details.stats;
-      this.moves = response.details.moves.map((move: { move: { name: string } }) => move.move.name);
-      this.about = response.species.flavor_text_entries.find(
-        (entry: { language: { name: string; }; }) => entry.language.name === 'es'
-      )?.flavor_text ?? 'No information available';
-      this.abilities = response.details.abilities.map((ability: { ability: { name: string } }) => ability.ability.name);
-      // Procesamos la evolución
-      this.evolution = this.getEvolutionChain(response.evolution.chain);
+    this.isLoading = true;
+    this.pokemonService.getPokemonFullDetails(pokemonId.toString()).subscribe({
+      next: (response) => {
+        this.pokemon = response;
+        this.stats = response.stats || [];
+        this.moves = response.moves.map((m: { move: { name: string } }) => m.move.name);
+        this.abilities = response.abilities?.map((a: { ability: { name: string } }) => a.ability.name) || [];
+        this.evolution = response.evolutionChain || [];
+        
+        // obtener detalles de evolución
+        if (this.evolution.length > 0) {
+          this.pokemonService.getEvolutionDetails(this.evolution).subscribe(
+            details => {
+              this.evolutionDetails = details;
+            }
+          );
+        }
+        // Cargar los detalles de la especie
+        this.loadPokemonSpecies(pokemonId);
+      },
+      error: (err) => {
+        console.error('Error al cargar los detalles del Pokémon', err);
+        this.isLoading = false;
+      }
     });
   }
-  
 
-  getEvolutionChain(evolutionChain: any): string[] {
-    let evolutions: string[] = [];
-    let currentEvolution = evolutionChain;
-  
-    // Recorremos toda la cadena de evolución
-    while (currentEvolution) {
-      // Agregar la especie actual
-      evolutions.push(currentEvolution.species.name);
-      
-      // Si hay una evolución, seguimos con el siguiente 
-      currentEvolution = currentEvolution.evolves_to[0];  // Se toma solo el primer Pokémon de la cadena evolutiva
-    }
-  
-    return evolutions;
+  loadPokemonSpecies(pokemonId: number) {
+    this.pokemonService.getPokemonSpecies(pokemonId.toString()).subscribe({
+      next: (speciesResponse) => {
+        const description = speciesResponse.flavor_text_entries.find(
+          (entry: { language: { name: string } }) => entry.language.name === 'es'
+        );
+        this.about = description ? description.flavor_text.replace(/\f/g, ' ') : 'No hay descripción disponible';
+        
+        // Establecer el color principal
+        this.mainColor = this.colorMap[speciesResponse.color.name] || '#808080';
+        this.isLoading = false;
+      },
+      error: (err) => {
+        console.error('Error al cargar la especie del Pokémon', err);
+        this.about = 'No hay descripción disponible';
+        this.isLoading = false;
+      }
+    });
+  }
+
+  getBackgroundStyle() {
+    return {
+      'background-color': this.mainColor 
+    };
+  }
+
+  getTypeButtonStyle() {
+    return {
+      'background-color': this.mainColor,
+      'color': this.isLightColor(this.mainColor) ? '#000' : '#fff'
+    };
+  }
+
+  private isLightColor(color: string): boolean {
+    // Convertir el color HEX a RGB
+    const hex = color.replace('#', '');
+    const r = parseInt(hex.substr(0, 2), 16);
+    const g = parseInt(hex.substr(2, 2), 16);
+    const b = parseInt(hex.substr(4, 2), 16);
+    
+    // Calcular la luminosidad
+    const brightness = (r * 299 + g * 587 + b * 114) / 1000;
+    return brightness > 128;
   }
 }
+
+

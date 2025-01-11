@@ -1,50 +1,71 @@
-<div mat-dialog-container>
-  <h1 mat-dialog-title>{{ pokemon?.name }}</h1>
+<div mat-dialog-container class="pokemon-modal" [ngStyle]="getBackgroundStyle()">
+  <div class="modal-content" *ngIf="!isLoading && pokemon">
+    <h1 mat-dialog-title [style.color]="mainColor">{{ pokemon.name }}</h1>
 
-<mat-dialog-content>
-  <div class="image-container">
-    <img [src]="pokemon?.sprites?.front_default" alt="{{ pokemon?.name }}" />
-  </div>
-  
-  <div>
-    <strong>Type: </strong>
-    <button mat-raised-button *ngFor="let type of pokemon?.types">{{ type?.type?.name }}</button>
-  </div>
-
-  <mat-tab-group>
-    <mat-tab label="About">
-      <div class="description-section">
-        <strong>Description:</strong>
-        <p class="description-text">{{ about }}</p>
+    <mat-dialog-content>
+      <div class="image-container">
+        <img [src]="pokemon.sprites.front_default" [alt]="pokemon.name" />
       </div>
-      <div class="abilities-section">
-        <strong>Abilities:</strong>
-        <div class="abilities-list">
-          <div class="ability-item" *ngFor="let ability of pokemon?.abilities">
-            {{ ability?.ability?.name }}
+
+      <div class="types-container">
+        <strong>Tipo: </strong>
+        <button mat-raised-button *ngFor="let type of pokemon.types" [ngStyle]="getTypeButtonStyle()">
+          {{ type.type.name }}
+        </button>
+      </div>
+
+      <mat-tab-group>
+        <mat-tab label="Acerca de">
+          <div class="tab-content">
+            <div class="description-section">
+              <p class="description-text">{{ about }}</p>
+            </div>
+            <div class="abilities-section">
+              <h3 [style.color]="mainColor">Habilidades:</h3>
+              <div class="abilities-list">
+                <div class="ability-item" *ngFor="let ability of abilities" [style.border-color]="mainColor">
+                  {{ ability }}
+                </div>
+              </div>
+            </div>
           </div>
-        </div>
-      </div>
-    </mat-tab>
-    <mat-tab label="Basic Stats">
-      <app-pokemon-stats [stats]="stats"></app-pokemon-stats>
-    </mat-tab>
-    <mat-tab label="Evolution">
-      <div *ngFor="let evol of evolution">
-        <li>{{ evol || 'Evolution data not available' }}</li>
-      </div>
-    </mat-tab>
-    <mat-tab label="Moves">
-      <div *ngFor="let move of moves">
-       <li>{{ move }}</li> 
-      </div>
-    </mat-tab>
-  </mat-tab-group>
+        </mat-tab>
 
-</mat-dialog-content>
+        <mat-tab label="Estadísticas">
+          <div class="tab-content">
+            <app-pokemon-stats [stats]="stats"></app-pokemon-stats>
+          </div>
+        </mat-tab>
 
-<mat-dialog-actions>
-  <button class="btn-close" mat-button mat-dialog-close>Cerrar</button>
-</mat-dialog-actions>
+        <mat-tab label="Evolución">
+          <div class="tab-content evolution-chain">
+            <div class="evolution-container">
+              <div class="evolution-item" *ngFor="let evol of evolutionDetails; let i = index">
+                <div class="evolution-details">
+                  <img [src]="evol.sprite" [alt]="evol.name" class="evolution-sprite">
+                  <span class="evolution-name">{{ evol.name }}</span>
+                </div>
+                <span *ngIf="i < evolutionDetails.length - 1" class="evolution-arrow" [style.color]="mainColor">→</span>
+              </div>
+            </div>
+          </div>
+        </mat-tab>
 
-</div>
+        <mat-tab label="Movimientos">
+          <div class="tab-content moves-list">
+            <div class="move-item" *ngFor="let move of moves" [style.border-color]="mainColor">
+              {{ move }}
+            </div>
+          </div>
+        </mat-tab>
+      </mat-tab-group>
+    </mat-dialog-content>
+    <mat-dialog-actions color="warn">
+      <button mat-button mat-dialog-close [ngStyle]="getTypeButtonStyle()">Cerrar</button>
+    </mat-dialog-actions>
+    <!-- Loading spinner -->
+    <div class="loading-container" *ngIf="isLoading">
+      <mat-spinner [style.color]="mainColor"></mat-spinner>
+    </div>
+    
+  </div>

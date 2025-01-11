@@ -7,6 +7,7 @@ import { ModalComponent } from '../../../shared/modal/modal.component';
 import { Subject, takeUntil } from 'rxjs';
 import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
 import { FormBuilder, FormGroup } from '@angular/forms';
+import { Pokemon } from '../../../models/pokemon';
 
 @Component({
   selector: 'app-pokemon-list',
@@ -16,7 +17,7 @@ import { FormBuilder, FormGroup } from '@angular/forms';
   styleUrl: './pokemon-list.component.css'
 })
 export class PokemonListComponent implements OnInit, OnDestroy {
-  pokemons: any[] = [];
+  pokemons: Pokemon[] = [];
   totalPokemons = 0;
   cols: number = 5;
   private destroy$ = new Subject<void>();
@@ -62,7 +63,7 @@ export class PokemonListComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.loadPokemons(0);
-  
+
     // Escuchar cambios en el valor del filtro
     this.filterForm.get('filterValue')?.valueChanges.subscribe((value) => {
       if (this.inputType === 'text') {
@@ -73,7 +74,7 @@ export class PokemonListComponent implements OnInit, OnDestroy {
         }
       }
     });
-  
+
     // Cambiar el tipo de input al cambiar el filtro
     this.filterForm.get('filterBy')?.valueChanges.subscribe((value) => {
       this.inputType = value === 'id' ? 'number' : 'text';
@@ -88,7 +89,9 @@ export class PokemonListComponent implements OnInit, OnDestroy {
 
   loadPokemons(offset: number): void {
     this.pokemonService.getPokemons(offset).subscribe({
+
       next: (data) => {
+        console.log('Pokémon cargado:', data);
         this.pokemons = data.pokemons;
         this.totalPokemons = data.total;
       },
@@ -97,7 +100,7 @@ export class PokemonListComponent implements OnInit, OnDestroy {
       }
     });
   }
-  
+
 
 
   onPageChange(event: any) {
@@ -132,7 +135,11 @@ export class PokemonListComponent implements OnInit, OnDestroy {
           this.pokemons = [{
             id: pokemon.id,
             name: pokemon.name,
-            image: pokemon.sprites.front_default
+            sprites: { front_default: pokemon.sprites.front_default },
+            types: [],
+            abilities: [],
+            stats: [],
+            moves: []
           }];
           this.totalPokemons = 1; // Solo un resultado
         },
@@ -151,17 +158,17 @@ export class PokemonListComponent implements OnInit, OnDestroy {
   //validar input
   validateInput(event: KeyboardEvent): boolean {
     const inputType = this.inputType;
-  
+
     if (inputType === 'number') {
       // Permitir solo números, backspace y delete
       return /[0-9]/.test(event.key) || ['Backspace', 'Delete'].includes(event.key);
     }
-  
+
     if (inputType === 'text') {
       // Permitir solo letras, espacios, ñ y caracteres acentuados
       return /^[a-zA-ZñÑáéíóúÁÉÍÓÚ\s]$/.test(event.key) || ['Backspace', 'Delete'].includes(event.key);
     }
-  
+
     return true;
   }
 

@@ -1,58 +1,24 @@
 export interface Pokemon {
-    species: any;
-    id: number;
-    name: string;
-    sprites: {
-      front_default: string;
-    };
-    types: Type[];
-    stats: Stat[];
-    moves: Move[];
-    abilities: Ability[];
-  }
-  export interface Ability {
-    ability: {
-      name: string;
-      url: string;
-    };
-    is_hidden: boolean;
-    slot: number;
-  }
-  export interface Type {
-    type: {
-      name: string;
-    };
-  }
-  
-  export interface Stat {
-    stat: {
-      name: string;
-    };
-    base_stat: number;
-  }
-  
-  export interface Move {
-    move: {
-      name: string;
-    };
-  }
-  
-  export interface Species {
-    evolution_chain: any;
-    flavor_text_entries: FlavorTextEntry[];
-  }
-  
-  export interface FlavorTextEntry {
-    language: {
-      name: string;
-    };
-    flavor_text: string;
-  }
-  
-  export interface EvolutionChain {
-    species: {
-      name: string;
-    };
-    evolves_to: EvolutionChain[];
-  }
-  
+  id: number; // Identificador único del Pokémon
+  name: string; // Nombre del Pokémon
+  sprites: {
+    front_default: string; // Imagen frontal por defecto
+  };
+  types: { type: { name: string } }[]; // Tipos del Pokémon
+  abilities: { ability: { name: string } }[]; // Habilidades
+  stats: { base_stat: number; stat: { name: string } }[]; // Estadísticas básicas
+  moves: { move: { name: string } }[]; // Movimientos
+}
+export interface PokemonSpecies {
+  flavor_text_entries: { flavor_text: string; language: { name: string } }[]; // Descripción del Pokémon
+  evolution_chain: { url: string }; // URL de la cadena de evolución
+}
+export interface PokemonEvolution {
+  chain: {
+    evolves_to: {
+      species: { name: string };
+      evolves_to: any[]; // Estructura recursiva
+    }[];
+    species: { name: string };
+  };
+}
