@@ -3,13 +3,13 @@ import { MaterialsModule } from '../../materials/materials.module';
 import { MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { CommonModule } from '@angular/common';
 import { PokemonService } from '../../pokemon.service';
-import {Pokemon} from '../../models/pokemon';
+import { Pokemon } from '../../models/pokemon';
 import { PokemonStatsComponent } from '../pokemon-stats/pokemon-stats.component';
 
 @Component({
   selector: 'app-modal',
   standalone: true,
-  imports: [MaterialsModule,CommonModule,PokemonStatsComponent],
+  imports: [MaterialsModule, CommonModule, PokemonStatsComponent],
   templateUrl: './modal.component.html',
   styleUrl: './modal.component.css'
 })
@@ -29,7 +29,7 @@ export class ModalComponent implements OnInit {
     blue: '#3B4CCA',
     brown: '#826647',
     gray: '#808080',
-    green: '#3DB731',
+    green: '#2C8A25',
     pink: '#FDB9E9',
     purple: '#7B62A3',
     red: '#FF0000',
@@ -40,7 +40,7 @@ export class ModalComponent implements OnInit {
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: { id: number },
     private pokemonService: PokemonService
-  ) {}
+  ) { }
 
   ngOnInit() {
     const pokemonId = Number(this.data.id);
@@ -56,7 +56,7 @@ export class ModalComponent implements OnInit {
         this.moves = response.moves.map((m: { move: { name: string } }) => m.move.name);
         this.abilities = response.abilities?.map((a: { ability: { name: string } }) => a.ability.name) || [];
         this.evolution = response.evolutionChain || [];
-        
+
         // obtener detalles de evolución
         if (this.evolution.length > 0) {
           this.pokemonService.getEvolutionDetails(this.evolution).subscribe(
@@ -82,9 +82,12 @@ export class ModalComponent implements OnInit {
           (entry: { language: { name: string } }) => entry.language.name === 'es'
         );
         this.about = description ? description.flavor_text.replace(/\f/g, ' ') : 'No hay descripción disponible';
-        
+
         // Establecer el color principal
-        this.mainColor = this.colorMap[speciesResponse.color.name] || '#808080';
+        const colorName = speciesResponse.color.name.toLowerCase();
+        console.log(colorName);
+        this.mainColor = this.colorMap[colorName] || '#808080';
+        console.log(this.mainColor);
         this.isLoading = false;
       },
       error: (err) => {
@@ -96,8 +99,10 @@ export class ModalComponent implements OnInit {
   }
 
   getBackgroundStyle() {
+    console.log(this.mainColor);
     return {
-      'background-color': this.mainColor 
+      'background-color': this.mainColor,
+      'filter': 'brightness(0.9) saturate(1.2)'
     };
   }
 
@@ -114,10 +119,10 @@ export class ModalComponent implements OnInit {
     const r = parseInt(hex.substr(0, 2), 16);
     const g = parseInt(hex.substr(2, 2), 16);
     const b = parseInt(hex.substr(4, 2), 16);
-    
+
     // Calcular la luminosidad
     const brightness = (r * 299 + g * 587 + b * 114) / 1000;
-    return brightness > 128;
+    return brightness > 180;
   }
 }
 
