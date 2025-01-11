@@ -91,7 +91,6 @@ export class PokemonListComponent implements OnInit, OnDestroy {
     this.pokemonService.getPokemons(offset).subscribe({
 
       next: (data) => {
-        console.log('Pokémon cargado:', data);
         this.pokemons = data.pokemons;
         this.totalPokemons = data.total;
       },
@@ -115,7 +114,6 @@ export class PokemonListComponent implements OnInit, OnDestroy {
     });
 
     dialogRef.afterClosed().subscribe((result: any) => {
-      console.log('El modal se ha cerrado', result);
     });
   }
   applyFilter(event: Event) {

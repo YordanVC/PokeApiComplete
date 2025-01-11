@@ -8,12 +8,12 @@ import { Pokemon, PokemonEvolution } from './models/pokemon';
 })
 export class PokemonService {
   private apiUrl = 'https://pokeapi.co/api/v2/pokemon';
-  private apiEvolutionUrl = 'https://pokeapi.co/api/v2/evolution-chain';
-  private maxPokemons = 1025; // Número máximo de pokémons disponibles
+  private apiSpeciesUrl = 'https://pokeapi.co/api/v2/pokemon-species';
+  private maxPokemons = 1025; // Número máximo de pokémons
 
   constructor(private http: HttpClient) { }
 
-  // Obtener lista de pokémons
+  // Obtener lista de pokemons
   getPokemons(offset: number): Observable<{ total: number; pokemons: any[] }> {
     const limit = 20;
 
@@ -22,7 +22,7 @@ export class PokemonService {
       offset = this.maxPokemons - limit;
     }
 
-    return this.http.get<any>(`https://pokeapi.co/api/v2/pokemon?offset=${offset}&limit=20`).pipe(
+    return this.http.get<any>(`${this.apiUrl}?offset=${offset}&limit=20`).pipe(
       switchMap((response: any) => {
         const pokemonRequests = response.results.map((pokemon: any) =>
           this.http.get<any>(pokemon.url) // Solicita los detalles de cada Pokémon
@@ -50,7 +50,7 @@ export class PokemonService {
   }
   // Método para obtener los detalles de la especie del Pokémon
   getPokemonSpecies(pokemonId: string): Observable<any> {
-    return this.http.get<any>(`https://pokeapi.co/api/v2/pokemon-species/${pokemonId}`);
+    return this.http.get<any>(`${this.apiSpeciesUrl}/${pokemonId}`);
   }
 
   // Obtener detalles enriquecidos combinados (incluye evolución)

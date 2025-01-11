@@ -25,10 +25,6 @@
   width: 100%;
 }
 
-.filter-button {
-  margin-top: 0px; /* Ajustado de -14px a -4px para bajar el botón */
-}
-
 button {
   width: 56px;
   height: 56px;
