@@ -77,17 +77,6 @@ export class PokemonListComponent implements OnInit, OnDestroy {
   ngOnInit() {
     this.loadPokemons(0);
 
-    // Escuchar cambios en el valor del filtro
-    this.filterForm.get('filterValue')?.valueChanges.subscribe((value) => {
-      if (this.inputType === 'text') {
-        // Limpiar cualquier carácter no permitido para texto
-        const cleanedValue = value.replace(/[^a-zA-ZñÑáéíóúÁÉÍÓÚ\s]/g, '');
-        if (value !== cleanedValue) {
-          this.filterForm.get('filterValue')?.setValue(cleanedValue, { emitEvent: false });
-        }
-      }
-    });
-
     // Cambiar el tipo de input al cambiar el filtro
     this.filterForm.get('filterBy')?.valueChanges.subscribe((value) => {
       this.inputType = value === 'id' ? 'number' : 'text';
@@ -200,10 +189,11 @@ export class PokemonListComponent implements OnInit, OnDestroy {
     const input = event.target as HTMLInputElement;
     let filterValue = input.value.trim().toLowerCase();
 
-    // Si es tipo texto, eliminar cualquier carácter que no sea letra
-    if (this.inputType === 'text') {
-      filterValue = filterValue.replace(/[^a-zA-ZñÑáéíóúÁÉÍÓÚ\s]/g, '');
-      input.value = filterValue; // Actualiza el valor del input
+    if (!this.validateInput(filterValue)) {
+      input.value = ''; // Limpiar el input si no es válido
+      this.pokemons = [];
+      this.totalPokemons = 0;
+      return;
     }
     if (filterValue) {
       // Llama a getPokemonByNameOrId para buscar en la API
@@ -233,21 +223,34 @@ export class PokemonListComponent implements OnInit, OnDestroy {
     }
   }
 
-  //validar input
-  validateInput(event: KeyboardEvent): boolean {
+  handleKeyDown(event: KeyboardEvent) {
     const inputType = this.inputType;
-
+  
     if (inputType === 'number') {
-      // Permitir solo números, backspace y delete
-      return /[0-9]/.test(event.key) || ['Backspace', 'Delete'].includes(event.key);
-    }
-
-    if (inputType === 'text') {
+      const allowedKeys = ['Backspace', 'Delete', 'Tab', 'ArrowLeft', 'ArrowRight'];
+  
+      // Permitir solo números y teclas permitidas
+      if (!/[0-9]/.test(event.key) && !allowedKeys.includes(event.key)) {
+        event.preventDefault(); 
+      }
+    } else if (inputType === 'text') {
+      const allowedKeys = ['Backspace', 'Delete', 'Tab', 'ArrowLeft', 'ArrowRight', ' '];
+  
       // Permitir solo letras, espacios, ñ y caracteres acentuados
-      return /^[a-zA-ZñÑáéíóúÁÉÍÓÚ\s]$/.test(event.key) || ['Backspace', 'Delete'].includes(event.key);
+      if (!/^[a-zA-ZñÑáéíóúÁÉÍÓÚ\s]$/.test(event.key) && !allowedKeys.includes(event.key)) {
+        event.preventDefault(); // Evitar la entrada de caracteres no permitidos
+      }
     }
-
-    return true;
+  }
+  //validar input
+  validateInput(value: string): boolean {
+    if (this.inputType === 'number') {
+      const idValue = Number(value);
+      return idValue > 0 && idValue <= 1025; // Validar que sea un número positivo y menor o igual a 1025
+    } else if (this.inputType === 'text') {
+      return /^[a-zA-ZñÑáéíóúÁÉÍÓÚ\s]*$/.test(value); // Validar solo letras y espacios
+    }
+    return false;
   }
 
 }

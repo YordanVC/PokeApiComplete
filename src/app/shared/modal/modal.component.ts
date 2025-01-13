@@ -108,9 +108,7 @@ export class ModalComponent implements OnInit {
 
         // Establecer el color principal
         const colorName = speciesResponse.color.name.toLowerCase();
-        console.log(colorName);
         this.mainColor = this.colorMap[colorName] || '#808080';
-        console.log(this.mainColor);
         this.isLoading = false;
       },
       error: (err) => {
@@ -120,9 +118,8 @@ export class ModalComponent implements OnInit {
       }
     });
   }
-
+  //metodos de estilos
   getBackgroundStyle() {
-    console.log(this.mainColor);
     return {
       'background-color': this.mainColor,
       'filter': 'brightness(0.9) saturate(1.2)'
