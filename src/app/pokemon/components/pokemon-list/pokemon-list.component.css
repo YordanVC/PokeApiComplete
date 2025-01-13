@@ -1,6 +1,7 @@
 .container{
     margin-top: 10px;
 }
+
 .title-card {
     display: flex;
     align-items: center; /* Centrar verticalmente */
@@ -41,42 +42,46 @@ button {
 .pokemon-list {
     padding: 16px;
   }
-  
+
   .pokemon-card {
-    width: 100%; /* Cambiado de 90% a 100% para que ocupe todo el espacio del tile */
-    height: 100%;
-    cursor: pointer;
-    border-radius: 10px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    transition: transform 0.2s;
-  }
-  
-  .card-content {
+    width: 100%;
     height: 100%;
     display: flex;
     flex-direction: column;
-    justify-content: center;
     align-items: center;
-    gap: 12px;
+    justify-content: center;
+    cursor: pointer;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
   }
   
-  .pokemon-card img {
+  .pokemon-card:hover {
+    transform: scale(1.05);
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.3) !important;
+  }
+  
+  .card-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    width: 100%;
+    height: 100%;
+  }
+  
+  .card-content img {
     width: 120px;
     height: 120px;
     object-fit: contain;
+    margin-bottom: 8px;
   }
   
-  .pokemon-card h2 {
+  .card-content h2 {
     margin: 0;
-    font-size: 1.2em;
-    color: #673ab7;
+    font-size: 1.2rem;
     text-transform: capitalize;
   }
-  .pokemon-card:hover {
-    transform: translateY(-10px) scale(1.02);
-    box-shadow: 0 12px 16px rgba(103, 58, 183, 0.2);
-    border: 2px solid #673ab7;
-   }
    
    .pokemon-card:hover h2 {
     color: #4a1a9e;
@@ -85,6 +90,7 @@ button {
    .pokemon-card:hover img {
     transform: scale(1.1);
    }
+
    .no-results {
     display: flex;
     flex-direction: column;

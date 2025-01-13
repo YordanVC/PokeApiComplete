@@ -13,6 +13,7 @@ import { PokemonStatsComponent } from '../pokemon-stats/pokemon-stats.component'
   templateUrl: './modal.component.html',
   styleUrl: './modal.component.css'
 })
+
 export class ModalComponent implements OnInit {
   pokemon: Pokemon | undefined;
   about: string = '';
@@ -23,6 +24,27 @@ export class ModalComponent implements OnInit {
   abilities: string[] = [];
   isLoading: boolean = true;
   mainColor: string = '';
+
+  private typeColorMap: { [key: string]: string } = {
+    normal: '#A8A878',
+    fire: '#F08030',
+    water: '#6890F0',
+    electric: '#F8D030',
+    grass: '#78C850',
+    ice: '#98D8D8',
+    fighting: '#C03028',
+    poison: '#A040A0',
+    ground: '#E0C068',
+    flying: '#A890F0',
+    psychic: '#F85888',
+    bug: '#A8B820',
+    rock: '#B8A038',
+    ghost: '#705898',
+    dragon: '#7038F8',
+    dark: '#705848',
+    steel: '#B8B8D0',
+    fairy: '#EE99AC'
+  };
 
   private colorMap: { [key: string]: string } = {
     black: '#303030',
@@ -56,10 +78,12 @@ export class ModalComponent implements OnInit {
         this.moves = response.moves.map((m: { move: { name: string } }) => m.move.name);
         this.abilities = response.abilities?.map((a: { ability: { name: string } }) => a.ability.name) || [];
         this.evolution = response.evolutionChain || [];
-
         // obtener detalles de evolución
-        if (this.evolution.length > 0) {
-          this.pokemonService.getEvolutionDetails(this.evolution).subscribe(
+        if (response.evolutionChain && response.evolutionChain.length > 0) {
+          this.pokemonService.getEvolutionDetails(
+            response.evolutionChain,
+            response.megaEvolutions
+          ).subscribe(
             details => {
               this.evolutionDetails = details;
             }
@@ -106,12 +130,27 @@ export class ModalComponent implements OnInit {
     };
   }
 
+  getTypeChipStyle(typeName: string) {
+    const backgroundColor = this.typeColorMap[typeName.toLowerCase()] || '#A8A878';
+    return {
+      'background-color': backgroundColor,
+      'color': this.isLightColor(backgroundColor) ? '#000' : '#fff',
+      'border': 'none',
+      'padding': '4px 12px',
+      'margin': '0 4px',
+      'font-size': '14px',
+      'font-weight': '500',
+      'text-transform': 'capitalize',
+      'cursor': 'default'
+    };
+  }
   getTypeButtonStyle() {
     return {
       'background-color': this.mainColor,
       'color': this.isLightColor(this.mainColor) ? '#000' : '#fff'
     };
   }
+
 
   private isLightColor(color: string): boolean {
     // Convertir el color HEX a RGB

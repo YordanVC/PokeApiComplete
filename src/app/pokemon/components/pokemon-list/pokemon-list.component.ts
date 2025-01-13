@@ -25,7 +25,18 @@ export class PokemonListComponent implements OnInit, OnDestroy {
   filterBy: string = 'name';
   filterForm: FormGroup;
   inputType: string = 'text'; // Tipo de input inicial
-
+  private colorMap: { [key: string]: string } = {
+    black: '#454545',  // Slightly lighter black for better visibility
+    blue: '#4F61D6',   // Softened blue
+    brown: '#96774F',  // Lighter brown
+    gray: '#939393',   // Lighter gray
+    green: '#41A13A',  // Softened green
+    pink: '#FFD0EF',   // Lighter pink
+    purple: '#8E77B3', // Softened purple
+    red: '#FF3333',    // Softened red
+    white: '#F5F5F5',  // Off-white for better contrast
+    yellow: '#FFE633'  // Softened yellow
+  };
   constructor(
     private pokemonService: PokemonService,
     private dialog: MatDialog,
@@ -60,7 +71,8 @@ export class PokemonListComponent implements OnInit, OnDestroy {
       filterBy: ['name']
     });
   }
-
+  pokemonColors: { [key: number]: string } = {};
+  private defaultColor: string = '#939393';
   ngOnInit() {
     this.loadPokemons(0);
 
@@ -93,6 +105,9 @@ export class PokemonListComponent implements OnInit, OnDestroy {
       next: (data) => {
         this.pokemons = data.pokemons;
         this.totalPokemons = data.total;
+        this.pokemons.forEach(pokemon => {
+          this.loadPokemonColor(pokemon.id);
+        });
       },
       error: (err) => {
         console.error('Error al cargar los Pokémon:', err);
@@ -100,7 +115,55 @@ export class PokemonListComponent implements OnInit, OnDestroy {
     });
   }
 
+  loadPokemonColor(pokemonId: number): void {
+    this.pokemonService.getPokemonSpecies(pokemonId.toString()).subscribe({
+      next: (speciesResponse) => {
+        const colorName = speciesResponse.color.name.toLowerCase();
+        this.pokemonColors[pokemonId] = this.colorMap[colorName] || '#939393';
+      },
+      error: (err) => {
+        console.error('Error al cargar el color del Pokémon:', err);
+        this.pokemonColors[pokemonId] = '#939393'; // Default color
+      }
+    });
+  }
+  getCardStyle(pokemonId: number) {
+    const color = this.pokemonColors[pokemonId] || this.defaultColor;
+    return {
+      'background-color': color,
+      'transition': 'all 0.3s ease',
+      'box-shadow': '0 2px 4px rgba(0,0,0,0.2)'
+    };
+  }
 
+  getTextStyle(pokemonId: number) {
+    const color = this.pokemonColors[pokemonId] || this.defaultColor;
+    return {
+      'color': this.isLightColor(color) ? '#000000' : '#ffffff'
+    };
+  }
+
+  private isLightColor(color: string): boolean {
+    if (!color) return true; // Valor por defecto si no hay color
+
+    try {
+      const hex = color.replace('#', '');
+      const r = parseInt(hex.substr(0, 2), 16);
+      const g = parseInt(hex.substr(2, 2), 16);
+      const b = parseInt(hex.substr(4, 2), 16);
+
+      // Validar que los valores RGB sean números válidos
+      if (isNaN(r) || isNaN(g) || isNaN(b)) {
+        return true; // Valor por defecto si hay error en la conversión
+      }
+
+      const brightness = (r * 299 + g * 587 + b * 114) / 1000;
+      return brightness > 180;
+    } catch (error) {
+      console.error('Error al procesar el color:', error);
+      return true; // Valor por defecto si hay error
+    }
+  }
 
   onPageChange(event: any) {
     const offset = event.pageIndex * event.pageSize;

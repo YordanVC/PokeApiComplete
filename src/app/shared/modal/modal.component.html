@@ -9,9 +9,15 @@
 
       <div class="types-container">
         <strong>Tipo: </strong>
-        <button mat-raised-button *ngFor="let type of pokemon.types" [ngStyle]="getTypeButtonStyle()">
-          {{ type.type.name }}
-        </button>
+        <mat-chip-set>
+          <mat-chip
+            *ngFor="let type of pokemon.types"
+            [ngStyle]="getTypeChipStyle(type.type.name)"
+            [disableRipple]="true"
+            class="type-chip">
+            {{ type.type.name }}
+          </mat-chip>
+        </mat-chip-set>
       </div>
 
       <mat-tab-group>

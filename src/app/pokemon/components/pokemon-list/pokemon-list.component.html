@@ -1,17 +1,15 @@
 <div class="container">
   <mat-card class="title-card" appearance="outlined">
-      <h1><strong>Lista de Pokemons:</strong></h1>
+    <h1><strong>Lista de Pokemons:</strong></h1>
   </mat-card>
 
   <form [formGroup]="filterForm">
     <div class="filter-container">
       <mat-form-field class="filter-input">
         <mat-label>Filter</mat-label>
-        <input matInput formControlName="filterValue" 
-        [type]="inputType" 
-        (keyup)="applyFilter($event)">
+        <input matInput formControlName="filterValue" [type]="inputType" (keyup)="applyFilter($event)">
       </mat-form-field>
-  
+
       <mat-form-field class="filter-input">
         <mat-label>Filter by</mat-label>
         <mat-select formControlName="filterBy">
@@ -19,30 +17,27 @@
           <mat-option value="name">Name</mat-option>
         </mat-select>
       </mat-form-field>
-      
+
     </div>
   </form>
-  
+
   <div class="pokemon-list">
     <!-- Mostrar mensaje si no hay Pokémon -->
     <div *ngIf="pokemons.length === 0" class="no-results">
       <p>Pokemon no encontrado.</p>
       <span>verifique si el id o nombre es correcto</span>
     </div>
-      <mat-grid-list [cols]="cols" rowHeight="220px" gutterSize="16px">
-          <mat-grid-tile *ngFor="let pokemon of pokemons" (click)="openPokemonModal(pokemon)">
-              <mat-card class="pokemon-card" appearance="outlined">
-                  <mat-card-content class="card-content">
-                      <img [src]="pokemon.sprites.front_default" alt="{{ pokemon.name }}" />
-                      <h2>{{ pokemon.name }}</h2>
-                  </mat-card-content>
-              </mat-card>
-          </mat-grid-tile>
-      </mat-grid-list>
-      <mat-paginator *ngIf="totalPokemons > 2"
-          [length]="totalPokemons" 
-          [pageSize]="20" 
-          (page)="onPageChange($event)">
-      </mat-paginator>
+    <mat-grid-list [cols]="cols" rowHeight="220px" gutterSize="16px">
+      <mat-grid-tile *ngFor="let pokemon of pokemons" (click)="openPokemonModal(pokemon)">
+        <mat-card class="pokemon-card" appearance="outlined" [ngStyle]="getCardStyle(pokemon.id)">
+          <mat-card-content class="card-content">
+            <img [src]="pokemon.sprites.front_default" alt="{{ pokemon.name }}" />
+            <h2 [ngStyle]="getTextStyle(pokemon.id)">{{ pokemon.name }}</h2>
+          </mat-card-content>
+        </mat-card>
+      </mat-grid-tile>
+    </mat-grid-list>
+    <mat-paginator *ngIf="totalPokemons > 2" [length]="totalPokemons" [pageSize]="20" (page)="onPageChange($event)">
+    </mat-paginator>
   </div>
 </div>

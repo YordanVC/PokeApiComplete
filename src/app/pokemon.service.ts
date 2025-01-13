@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { forkJoin, map, Observable, switchMap } from 'rxjs';
+import { forkJoin, map, Observable, of, switchMap } from 'rxjs';
 import { Pokemon, PokemonEvolution } from './models/pokemon';
 
 @Injectable({
@@ -53,6 +53,7 @@ export class PokemonService {
     return this.http.get<any>(`${this.apiSpeciesUrl}/${pokemonId}`);
   }
 
+
   // Obtener detalles enriquecidos combinados (incluye evolución)
   getPokemonFullDetails(query: string): Observable<Pokemon & { evolutionChain: string[] }> {
     return this.getPokemonByNameOrId(query).pipe(
@@ -67,10 +68,14 @@ export class PokemonService {
         const evolutionChainUrl = species.evolution_chain.url;
         
         // Obtener la cadena de evolución usando la URL
-        return this.http.get<PokemonEvolution>(evolutionChainUrl).pipe(
-          map(evolutionChain => ({
+        return forkJoin({
+          evolutionData: this.http.get<PokemonEvolution>(evolutionChainUrl),
+          varieties: of(species.varieties)
+        }).pipe(
+          map(({ evolutionData, varieties }) => ({
             pokemon,
-            evolutionChain
+            evolutionChain: evolutionData,
+            varieties
           }))
         );
       }),
@@ -83,11 +88,31 @@ export class PokemonService {
           stat: { name: s.stat.name },
         })),
         moves: data.pokemon.moves.map((m) => ({ move: { name: m.move.name } })),
-        evolutionChain: this.getEvolutionChain(data.evolutionChain.chain), // Pasar la cadena de evolución completa
+        evolutionChain: this.getEvolutionChain(data.evolutionChain.chain),
+        megaEvolutions: this.getMegaEvolutions(data.varieties)
       }))
     );
   }
+  private getMegaEvolutions(varieties: any[]): string[] {
+    return varieties
+      .filter(variety => variety.pokemon.name.includes('-mega'))
+      .map(variety => variety.pokemon.name);
+  }
+
+  getEvolutionDetails(evolutionChain: string[], megaEvolutions: string[] = []): Observable<{ name: string, sprite: string }[]> {
+    const allForms = [...evolutionChain, ...megaEvolutions];
+    
+    const evolutionRequests = allForms.map(name => 
+      this.getPokemonByNameOrId(name).pipe(
+        map(pokemon => ({
+          name: pokemon.name,
+          sprite: pokemon.sprites.front_default  
+        }))
+      )
+    );
   
+    return forkJoin(evolutionRequests);
+  }
   // Método para obtener cadena de evolución más robusto
   getEvolutionChain(chain: PokemonEvolution['chain']): string[] {
     const evolutions: string[] = [];
@@ -110,18 +135,6 @@ export class PokemonService {
     return evolutions;
   }
 
-  getEvolutionDetails(evolutionChain: string[]): Observable<{ name: string, sprite: string }[]> {
-    const evolutionRequests = evolutionChain.map(name => 
-      this.getPokemonByNameOrId(name).pipe(
-        map(pokemon => ({
-          name: pokemon.name,
-          sprite: pokemon.sprites.front_default
-        }))
-      )
-    );
-  
-    // Combinar los resultados de todas las solicitudes
-    return forkJoin(evolutionRequests);
-  }
+
 
 }
