@@ -37,6 +37,7 @@ export class PokemonListComponent implements OnInit, OnDestroy {
     white: '#F5F5F5',  // Off-white for better contrast
     yellow: '#FFE633'  // Softened yellow
   };
+
   constructor(
     private pokemonService: PokemonService,
     private dialog: MatDialog,
@@ -73,6 +74,7 @@ export class PokemonListComponent implements OnInit, OnDestroy {
   }
   pokemonColors: { [key: number]: string } = {};
   private defaultColor: string = '#939393';
+
   ngOnInit() {
     this.loadPokemons(0);
 
@@ -100,7 +102,12 @@ export class PokemonListComponent implements OnInit, OnDestroy {
   }
 
   loadPokemons(offset: number): void {
-    this.pokemonService.getPokemons(offset).subscribe({
+    const maxPokemons = 1025;
+
+    // Asegurar que el offset no supere el límite
+    const adjustedOffset = Math.min(offset, maxPokemons - 20);
+
+    this.pokemonService.getPokemons(adjustedOffset).subscribe({
 
       next: (data) => {
         this.pokemons = data.pokemons;
@@ -165,8 +172,18 @@ export class PokemonListComponent implements OnInit, OnDestroy {
     }
   }
 
-  onPageChange(event: any) {
-    const offset = event.pageIndex * event.pageSize;
+  onPageChange(event: any): void {
+    const pageIndex = event.pageIndex;
+    const pageSize = event.pageSize;
+
+    // Calcula el offset basándote en la página y el tamaño de la página
+    let offset = pageIndex * pageSize;
+    
+    if (offset + pageSize > this.totalPokemons) {
+      offset = this.totalPokemons - pageSize;  // Ajusta el offset para no exceder el total
+    }
+
+    // Cargar los Pokémon
     this.loadPokemons(offset);
   }
 
@@ -179,6 +196,7 @@ export class PokemonListComponent implements OnInit, OnDestroy {
     dialogRef.afterClosed().subscribe((result: any) => {
     });
   }
+
   applyFilter(event: Event) {
     const input = event.target as HTMLInputElement;
     let filterValue = input.value.trim().toLowerCase();
