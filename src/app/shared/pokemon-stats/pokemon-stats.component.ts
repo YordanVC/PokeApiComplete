@@ -3,22 +3,21 @@ import { CommonModule } from '@angular/common';
 import { Component, Input } from '@angular/core';
 
 @Component({
-  selector: 'app-pokemon-stats',
-  standalone: true,
-  imports: [
-    CommonModule
-  ],
-  templateUrl: './pokemon-stats.component.html',
-  styleUrl: './pokemon-stats.component.css',
-  animations: [
-    trigger('barAnimation', [
-      state('in', style({ width: '*' })),
-      transition(':enter', [
-        style({ width: '0%' }),
-        animate('1000ms ease-out')
-      ])
-    ])
-  ]
+    selector: 'app-pokemon-stats',
+    imports: [
+        CommonModule
+    ],
+    templateUrl: './pokemon-stats.component.html',
+    styleUrl: './pokemon-stats.component.css',
+    animations: [
+        trigger('barAnimation', [
+            state('in', style({ width: '*' })),
+            transition(':enter', [
+                style({ width: '0%' }),
+                animate('1000ms ease-out')
+            ])
+        ])
+    ]
 })
 export class PokemonStatsComponent {
   @Input() stats: any[] = [];

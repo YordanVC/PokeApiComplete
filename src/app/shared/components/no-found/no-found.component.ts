@@ -3,11 +3,10 @@ import { MaterialsModule } from '../../../materials/materials.module';
 import { Router } from '@angular/router';
 
 @Component({
-  selector: 'app-no-found',
-  standalone: true,
-  imports: [MaterialsModule],
-  templateUrl: './no-found.component.html',
-  styleUrl: './no-found.component.css'
+    selector: 'app-no-found',
+    imports: [MaterialsModule],
+    templateUrl: './no-found.component.html',
+    styleUrl: './no-found.component.css'
 })
 export class NoFoundComponent {
   constructor(private router: Router) {}

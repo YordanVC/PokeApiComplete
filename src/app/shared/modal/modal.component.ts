@@ -7,11 +7,10 @@ import { Pokemon } from '../../models/pokemon';
 import { PokemonStatsComponent } from '../pokemon-stats/pokemon-stats.component';
 
 @Component({
-  selector: 'app-modal',
-  standalone: true,
-  imports: [MaterialsModule, CommonModule, PokemonStatsComponent],
-  templateUrl: './modal.component.html',
-  styleUrl: './modal.component.css'
+    selector: 'app-modal',
+    imports: [MaterialsModule, CommonModule, PokemonStatsComponent],
+    templateUrl: './modal.component.html',
+    styleUrl: './modal.component.css'
 })
 
 export class ModalComponent implements OnInit {

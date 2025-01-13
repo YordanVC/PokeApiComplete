@@ -10,11 +10,10 @@ import { FormBuilder, FormGroup } from '@angular/forms';
 import { Pokemon } from '../../../models/pokemon';
 
 @Component({
-  selector: 'app-pokemon-list',
-  standalone: true,
-  imports: [MaterialsModule, CommonModule],
-  templateUrl: './pokemon-list.component.html',
-  styleUrl: './pokemon-list.component.css'
+    selector: 'app-pokemon-list',
+    imports: [MaterialsModule, CommonModule],
+    templateUrl: './pokemon-list.component.html',
+    styleUrl: './pokemon-list.component.css'
 })
 export class PokemonListComponent implements OnInit, OnDestroy {
   pokemons: Pokemon[] = [];
