@@ -23,21 +23,27 @@
 
   <div class="pokemon-list">
     <!-- Mostrar mensaje si no hay Pokémon -->
-    <div *ngIf="pokemons.length === 0" class="no-results">
-      <p>Pokemon no encontrado.</p>
-      <span>verifique si el id o nombre es correcto</span>
-    </div>
+    @if (pokemons.length === 0) {
+      <div class="no-results">
+        <p>Pokemon no encontrado.</p>
+        <span>verifique si el id o nombre es correcto</span>
+      </div>
+    }
     <mat-grid-list [cols]="cols" rowHeight="220px" gutterSize="16px">
-      <mat-grid-tile *ngFor="let pokemon of pokemons" (click)="openPokemonModal(pokemon)">
-        <mat-card class="pokemon-card" appearance="outlined" [ngStyle]="getCardStyle(pokemon.id)">
-          <mat-card-content class="card-content">
-            <img [src]="pokemon.sprites.front_default" alt="{{ pokemon.name }}" />
-            <h2 [ngStyle]="getTextStyle(pokemon.id)">{{ pokemon.name }}</h2>
-          </mat-card-content>
-        </mat-card>
-      </mat-grid-tile>
+      @for (pokemon of pokemons; track pokemon) {
+        <mat-grid-tile (click)="openPokemonModal(pokemon)">
+          <mat-card class="pokemon-card" appearance="outlined" [ngStyle]="getCardStyle(pokemon.id)">
+            <mat-card-content class="card-content">
+              <img [src]="pokemon.sprites.front_default" alt="{{ pokemon.name }}" />
+              <h2 [ngStyle]="getTextStyle(pokemon.id)">{{ pokemon.name }}</h2>
+            </mat-card-content>
+          </mat-card>
+        </mat-grid-tile>
+      }
     </mat-grid-list>
-    <mat-paginator *ngIf="totalPokemons > 2" [length]="totalPokemons" [pageSize]="20" (page)="onPageChange($event)">
-    </mat-paginator>
+    @if (totalPokemons > 2) {
+      <mat-paginator [length]="totalPokemons" [pageSize]="20" (page)="onPageChange($event)">
+      </mat-paginator>
+    }
   </div>
 </div>

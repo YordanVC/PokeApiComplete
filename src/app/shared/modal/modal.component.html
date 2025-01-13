@@ -1,77 +1,83 @@
 <div mat-dialog-container class="pokemon-modal" [ngStyle]="getBackgroundStyle()">
-  <div class="modal-content" *ngIf="!isLoading && pokemon">
-    <h1 class="title-modal" mat-dialog-title [style.color]="mainColor">{{ pokemon.name }}</h1>
-
-    <mat-dialog-content>
-      <div class="image-container">
-        <img [src]="pokemon.sprites.front_default" [alt]="pokemon.name" />
-      </div>
-
-      <div class="types-container">
-        <strong>Tipo: </strong>
-        <mat-chip-set>
-          <mat-chip
-            *ngFor="let type of pokemon.types"
-            [ngStyle]="getTypeChipStyle(type.type.name)"
-            [disableRipple]="true"
-            class="type-chip">
-            {{ type.type.name }}
-          </mat-chip>
-        </mat-chip-set>
-      </div>
-
-      <mat-tab-group>
-        <mat-tab label="Acerca de">
-          <div class="tab-content">
-            <div class="description-section">
-              <p class="description-text">{{ about }}</p>
-            </div>
-            <div class="abilities-section">
-              <h3 [style.color]="mainColor">Habilidades:</h3>
-              <div class="abilities-list">
-                <div class="ability-item" *ngFor="let ability of abilities" [style.border-color]="mainColor">
-                  {{ ability }}
+  @if (!isLoading && pokemon) {
+    <div class="modal-content">
+      <h1 class="title-modal" mat-dialog-title [style.color]="mainColor">{{ pokemon.name }}</h1>
+      <mat-dialog-content>
+        <div class="image-container">
+          <img [src]="pokemon.sprites.front_default" [alt]="pokemon.name" />
+        </div>
+        <div class="types-container">
+          <strong>Tipo: </strong>
+          <mat-chip-set>
+            @for (type of pokemon.types; track type) {
+              <mat-chip
+                [ngStyle]="getTypeChipStyle(type.type.name)"
+                [disableRipple]="true"
+                class="type-chip">
+                {{ type.type.name }}
+              </mat-chip>
+            }
+          </mat-chip-set>
+        </div>
+        <mat-tab-group>
+          <mat-tab label="Acerca de">
+            <div class="tab-content">
+              <div class="description-section">
+                <p class="description-text">{{ about }}</p>
+              </div>
+              <div class="abilities-section">
+                <h3 [style.color]="mainColor">Habilidades:</h3>
+                <div class="abilities-list">
+                  @for (ability of abilities; track ability) {
+                    <div class="ability-item" [style.border-color]="mainColor">
+                      {{ ability }}
+                    </div>
+                  }
                 </div>
               </div>
             </div>
-          </div>
-        </mat-tab>
-
-        <mat-tab label="Estadísticas">
-          <div class="tab-content">
-            <app-pokemon-stats [stats]="stats"></app-pokemon-stats>
-          </div>
-        </mat-tab>
-
-        <mat-tab label="Evolución">
-          <div class="tab-content evolution-chain">
-            <div class="evolution-container">
-              <div class="evolution-item" *ngFor="let evol of evolutionDetails; let i = index">
-                <div class="evolution-details">
-                  <img [src]="evol.sprite" [alt]="evol.name" class="evolution-sprite">
-                  <span class="evolution-name">{{ evol.name }}</span>
-                </div>
-                <span *ngIf="i < evolutionDetails.length - 1" class="evolution-arrow" [style.color]="mainColor">→</span>
+          </mat-tab>
+          <mat-tab label="Estadísticas">
+            <div class="tab-content">
+              <app-pokemon-stats [stats]="stats"></app-pokemon-stats>
+            </div>
+          </mat-tab>
+          <mat-tab label="Evolución">
+            <div class="tab-content evolution-chain">
+              <div class="evolution-container">
+                @for (evol of evolutionDetails; track evol; let i = $index) {
+                  <div class="evolution-item">
+                    <div class="evolution-details">
+                      <img [src]="evol.sprite" [alt]="evol.name" class="evolution-sprite">
+                      <span class="evolution-name">{{ evol.name }}</span>
+                    </div>
+                    @if (i < evolutionDetails.length - 1) {
+                      <span class="evolution-arrow" [style.color]="mainColor">→</span>
+                    }
+                  </div>
+                }
               </div>
             </div>
-          </div>
-        </mat-tab>
-
-        <mat-tab label="Movimientos">
-          <div class="tab-content moves-list">
-            <div class="move-item" *ngFor="let move of moves" [style.border-color]="mainColor">
-              {{ move }}
+          </mat-tab>
+          <mat-tab label="Movimientos">
+            <div class="tab-content moves-list">
+              @for (move of moves; track move) {
+                <div class="move-item" [style.border-color]="mainColor">
+                  {{ move }}
+                </div>
+              }
             </div>
-          </div>
-        </mat-tab>
-      </mat-tab-group>
-    </mat-dialog-content>
-    <mat-dialog-actions color="warn">
-      <button mat-button mat-dialog-close [ngStyle]="getTypeButtonStyle()">Cerrar</button>
-    </mat-dialog-actions>
-    <!-- Loading spinner -->
-    <div class="loading-container" *ngIf="isLoading">
-      <mat-spinner [style.color]="mainColor"></mat-spinner>
+          </mat-tab>
+        </mat-tab-group>
+      </mat-dialog-content>
+      <mat-dialog-actions color="warn">
+        <button mat-button mat-dialog-close [ngStyle]="getTypeButtonStyle()">Cerrar</button>
+      </mat-dialog-actions>
+      <!-- Loading spinner -->
+      @if (isLoading) {
+        <div class="loading-container">
+          <mat-spinner [style.color]="mainColor"></mat-spinner>
+        </div>
+      }
     </div>
-    
-  </div>
+  }

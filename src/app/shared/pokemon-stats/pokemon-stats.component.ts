@@ -1,12 +1,10 @@
 import { animate, state, style, transition, trigger } from '@angular/animations';
-import { CommonModule } from '@angular/common';
+
 import { Component, Input } from '@angular/core';
 
 @Component({
     selector: 'app-pokemon-stats',
-    imports: [
-        CommonModule
-    ],
+    imports: [],
     templateUrl: './pokemon-stats.component.html',
     styleUrl: './pokemon-stats.component.css',
     animations: [

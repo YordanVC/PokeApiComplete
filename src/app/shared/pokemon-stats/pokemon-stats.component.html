@@ -1,15 +1,17 @@
 <div class="stats-container">
-    <div class="stat-item" *ngFor="let stat of stats">
+  @for (stat of stats; track stat) {
+    <div class="stat-item">
       <div class="stat-header">
         <span class="stat-name">{{formatStatName(stat.stat.name)}}</span>
         <span class="stat-value">{{stat.base_stat}}</span>
       </div>
       <div class="stat-bar-container">
-        <div class="stat-bar" 
-             [@barAnimation]="'in'"
-             [style.width.%]="(stat.base_stat / maxStat) * 100"
-             [style.background-color]="getStatColor(stat.stat.name)">
+        <div class="stat-bar"
+          [@barAnimation]="'in'"
+          [style.width.%]="(stat.base_stat / maxStat) * 100"
+          [style.background-color]="getStatColor(stat.stat.name)">
         </div>
       </div>
     </div>
-  </div>
+  }
+</div>
