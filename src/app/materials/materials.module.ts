@@ -14,6 +14,7 @@ import {MatIconModule} from '@angular/material/icon';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import {MatChipsModule} from '@angular/material/chips';
+import { FormsModule } from '@angular/forms';
 @NgModule({
   declarations: [],
   imports: [
@@ -32,7 +33,8 @@ import {MatChipsModule} from '@angular/material/chips';
     MatIconModule,
     ReactiveFormsModule,
     MatProgressSpinnerModule,
-    MatChipsModule
+    MatChipsModule,
+    FormsModule
   ],
   exports: [
     MatToolbarModule,
@@ -49,7 +51,8 @@ import {MatChipsModule} from '@angular/material/chips';
     MatIconModule,
     ReactiveFormsModule,
     MatProgressSpinnerModule,
-    MatChipsModule
+    MatChipsModule,
+    FormsModule
   ]
 })
 export class MaterialsModule { }

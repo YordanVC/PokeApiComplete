@@ -1,6 +1,6 @@
 import { Component, HostListener, OnDestroy, OnInit } from '@angular/core';
 import { MaterialsModule } from '../../../materials/materials.module';
-import { PokemonService } from '../../../pokemon.service';
+import { PokemonService } from '../../../services/pokemon/pokemon.service';
 import { CommonModule } from '@angular/common';
 import { MatDialog } from '@angular/material/dialog';
 import { ModalComponent } from '../../../shared/modal/modal.component';
