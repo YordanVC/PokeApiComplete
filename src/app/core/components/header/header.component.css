@@ -21,3 +21,29 @@
 .button-container {
     margin-left: auto; 
 }
+
+.pokemon-cart {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-left: auto;  
+}
+
+.pokedex-button {
+    padding: 0; 
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.pokedex-img {
+    margin-top: 10px;
+    max-width: 30px; 
+    max-height: 30px; 
+    object-fit: contain; 
+}
+::ng-deep .mat-badge-content {
+    background-color: red !important; /* Fondo rojo */
+    color: white !important;         /* Letras blancas */
+    font-weight: bold;               /* Opcional: texto en negrita */
+}

@@ -10,6 +10,7 @@ import { Router } from '@angular/router';
     styleUrl: './header.component.css'
 })
 export class HeaderComponent {
+  MyPokemons:[]=[]
     constructor(
         public authService: AuthService, 
         private router: Router

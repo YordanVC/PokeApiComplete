@@ -4,7 +4,8 @@ import { MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { CommonModule } from '@angular/common';
 import { PokemonService } from '../../../services/pokemon/pokemon.service';
 import { Pokemon } from '../../../models/pokemon';
-import { PokemonStatsComponent } from '../pokemon-stats/pokemon-stats.component';
+import { PokemonStatsComponent } from '../../../shared/pokemon-stats/pokemon-stats.component';
+
 
 @Component({
     selector: 'app-modal',

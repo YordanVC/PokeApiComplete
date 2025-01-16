@@ -16,7 +16,7 @@ import { Pokemon } from '../../../models/pokemon';
     styleUrl: './pokemon-list.component.css'
 })
 export class PokemonListComponent implements OnInit, OnDestroy {
-  pokemons: Pokemon[] = [];
+  pokemons: Pokemon[] | undefined = undefined;
   totalPokemons = 0;
   cols: number = 5;
   private destroy$ = new Subject<void>();

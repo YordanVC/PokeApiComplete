@@ -23,7 +23,7 @@
 
   <div class="pokemon-list">
     <!-- Mostrar mensaje si no hay Pokémon -->
-    @if (pokemons.length === 0) {
+    @if (pokemons && pokemons.length === 0) {
       <div class="no-results">
         <p>Pokemon no encontrado.</p>
         <span>verifique si el id o nombre es correcto</span>
