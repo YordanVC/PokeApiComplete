@@ -3,7 +3,7 @@ import { MaterialsModule } from '../../../materials/materials.module';
 import { PokemonService } from '../../../services/pokemon/pokemon.service';
 import { CommonModule } from '@angular/common';
 import { MatDialog } from '@angular/material/dialog';
-import { ModalComponent } from '../../../shared/modal/modal.component';
+import { ModalComponent } from '../modal/modal.component';
 import { Subject, takeUntil } from 'rxjs';
 import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
 import { FormBuilder, FormGroup } from '@angular/forms';

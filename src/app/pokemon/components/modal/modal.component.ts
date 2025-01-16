@@ -1,14 +1,14 @@
 import { Component, Inject, OnInit } from '@angular/core';
-import { MaterialsModule } from '../../materials/materials.module';
+import { MaterialsModule } from '../../../materials/materials.module';
 import { MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { CommonModule } from '@angular/common';
-import { PokemonService } from '../../services/pokemon/pokemon.service';
-import { Pokemon } from '../../models/pokemon';
+import { PokemonService } from '../../../services/pokemon/pokemon.service';
+import { Pokemon } from '../../../models/pokemon';
 import { PokemonStatsComponent } from '../pokemon-stats/pokemon-stats.component';
 
 @Component({
     selector: 'app-modal',
-    imports: [MaterialsModule, CommonModule, PokemonStatsComponent],
+    imports: [MaterialsModule,PokemonStatsComponent,CommonModule],
     templateUrl: './modal.component.html',
     styleUrl: './modal.component.css'
 })
