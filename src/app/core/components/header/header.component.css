@@ -43,7 +43,7 @@
     object-fit: contain; 
 }
 ::ng-deep .mat-badge-content {
-    background-color: red !important; /* Fondo rojo */
-    color: white !important;         /* Letras blancas */
-    font-weight: bold;               /* Opcional: texto en negrita */
+    background-color: red !important; 
+    color: white !important;      
+    font-weight: bold;              
 }
