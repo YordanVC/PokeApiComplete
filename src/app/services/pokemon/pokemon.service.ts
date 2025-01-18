@@ -57,7 +57,7 @@ export class PokemonService {
     return this.http.get<any>(`${this.apiSpeciesUrl}/${pokemonId}`);
   }
 
-
+  //q
   // Obtener detalles enriquecidos combinados (incluye evolución)
   getPokemonFullDetails(query: string): Observable<Pokemon & { evolutionChain: string[] }> {
     return this.getPokemonByNameOrId(query).pipe(
