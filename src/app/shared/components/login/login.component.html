@@ -1,0 +1,44 @@
+<main>
+    <mat-card>
+      <mat-card-header>
+        <h2>PokeApi</h2>
+      </mat-card-header>
+      <mat-card-content>
+        <form #loginForm="ngForm" (ngSubmit)="login()">
+          <h4 class="card-title">Acceso</h4>
+          
+          @if (!loginValid) {
+            <mat-error>
+              El usuario y contraseña no son correctos!.
+            </mat-error>
+          }
+          
+          <mat-form-field>
+            <mat-label>Usuario</mat-label>
+            <input matInput placeholder="Usuario" 
+                   [(ngModel)]="username" 
+                   name="username" 
+                   required>
+          </mat-form-field>
+          
+          <mat-form-field>
+            <mat-label>Contraseña</mat-label>
+            <input matInput 
+                   type="password" 
+                   placeholder="Contraseña" 
+                   [(ngModel)]="password" 
+                   name="password"
+                   required>
+          </mat-form-field>
+
+          <p class="register-link">¿No tienes cuenta? <a routerLink="/register">Registrate</a></p>
+          
+          <button mat-raised-button 
+                  color="primary" 
+                  [disabled]="!loginForm.form.valid">
+            Login
+          </button>
+        </form>
+      </mat-card-content>
+    </mat-card>
+  </main>

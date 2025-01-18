@@ -1,0 +1,20 @@
+<mat-toolbar color="primary">
+    <img src="assets/icons8-pokedex-96.png" alt="Ícono Personalizado" class="custom-icon">
+    <span class="title"><strong>PokeDex</strong></span>
+
+    <div class="spacer"></div> 
+    
+    <div class="button-container">
+        @if (authService.isAuthenticated()) {
+            <div class="pokemon-cart">
+                <button class="pokedex-button" mat-raised-button [matBadge]="myPokemons.length" aria-label="Mis pokemons" matTooltip="Pokedex">
+                    <img class="pokedex-img" src="assets/pokeball.png">
+                </button>   
+            </div>
+        <button mat-icon-button (click)="logout()" aria-label="Logout" matTooltip="Cerrar Sesión">
+            <mat-icon>logout</mat-icon>
+        </button>
+        }
+    </div>
+    
+</mat-toolbar>

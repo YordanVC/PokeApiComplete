@@ -1,0 +1,16 @@
+footer {
+    background-color: #673ab7; /* Deep Purple */
+    color: #fff; 
+    padding: 20px 0; 
+    text-align: center; /* Centrar el texto */
+  }
+  
+  .footer-bottom {
+    max-width: 1200px; /* Ancho máximo para el contenido */
+    margin: 0 auto; /* Centrar el contenido */
+  }
+  
+  footer p {
+    margin: 0; /* Eliminar márgenes por defecto */
+    font-size: 14px; /* Tamaño de fuente */
+  }
