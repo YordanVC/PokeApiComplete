@@ -1,10 +1,11 @@
-import { Component, Inject, OnInit } from '@angular/core';
+import { Component, Inject, OnInit, Optional } from '@angular/core';
 import { MaterialsModule } from '../../../materials/materials.module';
 import { MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { CommonModule } from '@angular/common';
 import { PokemonService } from '../../../services/pokemon/pokemon.service';
 import { Pokemon } from '../../../models/pokemon';
 import { PokemonStatsComponent } from '../../../shared/pokemon-stats/pokemon-stats.component';
+import { HeaderComponent } from '../../../core/components/header/header.component';
 
 
 @Component({
@@ -61,7 +62,7 @@ export class ModalComponent implements OnInit {
 
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: { id: number },
-    private pokemonService: PokemonService
+    private pokemonService: PokemonService,
   ) { }
 
   ngOnInit() {
@@ -116,6 +117,23 @@ export class ModalComponent implements OnInit {
         console.error('Error al cargar la especie del Pokémon', err);
         this.about = 'No hay descripción disponible';
         this.isLoading = false;
+      }
+    });
+  }
+
+  addPokemon() {
+    const pokemonId = this.data.id; 
+    this.pokemonService.addPokemon(pokemonId).subscribe({
+      next: (result) => {
+        if (result) {
+          console.log('Pokémon agregado exitosamente');
+          // Aquí puedes cerrar el modal o mostrar un mensaje de éxito
+        } else {
+          console.error('No se pudo agregar el Pokémon');
+        }
+      },
+      error: (error) => {
+        console.error('Error al agregar Pokémon', error);
       }
     });
   }

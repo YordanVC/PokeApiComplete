@@ -44,7 +44,6 @@ export interface EvolutionDetail {
 export interface MyPokemonsResponse {
   id: number;
   pokemonId: number;
-  username: string;
   estado: 'CAPTURADO' | 'LIBERADO';
 }
 export interface PokemonRequest {

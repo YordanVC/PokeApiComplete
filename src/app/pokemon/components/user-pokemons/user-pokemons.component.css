@@ -1,0 +1,38 @@
+.mat-mdc-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+}
+
+.mat-mdc-header-row {
+  display: table-row;
+  color: white;
+  background-color: #673ab7;
+}
+
+.mat-mdc-row {
+  display: table-row;
+}
+
+.mat-mdc-header-cell {
+  display: table-cell;
+  text-align: center;
+  padding: 10px;
+}
+
+.mat-mdc-cell {
+  display: table-cell;
+  text-align: center;
+  vertical-align: middle;
+  padding: 10px;
+}
+
+.mat-mdc-cell img {
+  max-width: 100px;
+  max-height: 100px;
+  object-fit: contain;
+}
+
+.mat-mdc-cell button {
+  margin: 0 auto;
+}

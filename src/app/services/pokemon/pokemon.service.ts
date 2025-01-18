@@ -142,43 +142,36 @@ export class PokemonService {
   // Obtener los Pokémon del usuario actual
   getUserPokemons(): Observable<MyPokemonsResponse[]> {
     const username = this.authService.getCurrentUsername();
-    
+  
     if (!username) {
-        return throwError(() => new Error('Usuario no autenticado'));
+      return throwError(() => new Error('Usuario no autenticado'));
     }
-
+  
     const headers = new HttpHeaders({
-        'Authorization': `Bearer ${this.authService.getToken()}` // Asegúrate de que el token tenga el prefijo "Bearer "
+      'Authorization': `Bearer ${this.authService.getToken()}`
     });
-
-    return this.http.get<MyPokemonsResponse[]>(`${this.apiBackendPokemon}/${username}`, { headers })
-        .pipe(
-            catchError(error => {
-                console.error('Error detallado:', error);
-                
-                if (error.status === 401) {
-                    // Manejar específicamente el error 401
-                    
-                }
-                
-                return throwError(() => error);
-            })
-        );
-}
+  
+    return this.http.get<MyPokemonsResponse[]>(`${this.apiBackendPokemon}/${username}`, { headers });
+  }
 
   // Agregar un Pokémon
   addPokemon(pokemonId: number): Observable<string> {
+    console.log('pokemon que va add:',pokemonId)
     const username = this.authService.getCurrentUsername();
 
     if (!username) {
       return throwError(() => new Error('Usuario no autenticado'));
     }
 
+    const headers = new HttpHeaders({
+      'Authorization': `Bearer ${this.authService.getToken()}`
+    });
+
     const request: PokemonRequest = {
       username,
       pokemonId
     };
-    return this.http.post<string>(`${this.apiBackendPokemon}/add`, { body: request });
+    return this.http.post<string>(`${this.apiBackendPokemon}/add`, request, { headers });
   }
 
   // Liberar un Pokémon
@@ -187,12 +180,15 @@ export class PokemonService {
     if (!username) {
       return throwError(() => new Error('Usuario no autenticado'));
     }
+    const headers = new HttpHeaders({
+      'Authorization': `Bearer ${this.authService.getToken()}`
+    });
+
     const request: PokemonRequest = {
       username,
       pokemonId
     };
-    return this.http.delete<string>(`${this.apiBackendPokemon}/remove`, { body: request });
+    return this.http.delete<string>(`${this.apiBackendPokemon}/remove`, { headers, body: request });
   }
-
 
 }
