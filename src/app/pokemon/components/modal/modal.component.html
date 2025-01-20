@@ -71,13 +71,17 @@
         </mat-tab-group>
       </mat-dialog-content>
       <mat-dialog-actions color="warn">
-        <button mat-button mat-dialog-close [ngStyle]="getTypeButtonStyle()">Cerrar</button>
         <button mat-button mat-dialog (click)="addPokemon()" [ngStyle]="getTypeButtonStyle()">Elegir Pokemon</button>
+        <button mat-button mat-dialog-close [ngStyle]="getTypeButtonStyle()">Cerrar</button>
       </mat-dialog-actions>
       <!-- Loading spinner -->
       @if (isLoading) {
         <div class="loading-container">
-          <mat-spinner [style.color]="mainColor"></mat-spinner>
+          <mat-spinner 
+            [diameter]="50" 
+            [color]="'primary'" 
+            [style.color]="mainColor">
+          </mat-spinner>
         </div>
       }
     </div>

@@ -1,30 +1,55 @@
+.mat-mdc-dialog-content {
+  max-height: 70vh;
+  overflow: auto;
+  padding: 16px;
+}
+
 .mat-mdc-table {
   width: 100%;
-  border-collapse: separate;
-  border-spacing: 0;
+  min-width: 100%; /* Asegura que ocupe todo el ancho */
+  border-collapse: collapse;
 }
 
+/* Responsive Design para móviles */
+@media screen and (max-width: 768px) {
+  .mat-mdc-dialog-content {
+    padding: 8px;
+  }
+
+  .mat-mdc-table {
+    display: block;
+    width: 100%;
+    overflow-x: auto;
+  }
+
+  .mat-mdc-table table {
+    width: 100%; /* Ocupa todo el ancho disponible */
+    min-width: 600px; /* Ancho mínimo para mantener la estructura */
+  }
+
+  /* Ajusta el tamaño de las celdas */
+  .mat-mdc-cell {
+    padding: 8px;
+    font-size: 14px; /* Reduce ligeramente el tamaño de fuente */
+  }
+
+  .mat-mdc-cell img {
+    max-width: 80px;
+    max-height: 80px;
+  }
+}
+
+/* Estilos generales de la tabla */
 .mat-mdc-header-row {
-  display: table-row;
-  color: white;
   background-color: #673ab7;
+  color: white;
 }
 
-.mat-mdc-row {
-  display: table-row;
-}
-
-.mat-mdc-header-cell {
-  display: table-cell;
-  text-align: center;
-  padding: 10px;
-}
-
+.mat-mdc-header-cell,
 .mat-mdc-cell {
-  display: table-cell;
   text-align: center;
+  padding: 12px;
   vertical-align: middle;
-  padding: 10px;
 }
 
 .mat-mdc-cell img {
@@ -33,26 +58,23 @@
   object-fit: contain;
 }
 
+/* Botones y otros elementos */
 .mat-mdc-cell button {
-  margin: 0 auto;
+  min-width: 100px;
 }
+
+/* Estilo para cuando no hay pokémones */
 .no-pokemons {
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 200px; /* Ajusta según tu necesidad */
-  background-color: #f3e5f5; /* Un tono suave de morado para coherencia */
-  border: 2px dashed #673ab7; /* Bordes para destacar el mensaje */
+  height: 200px;
+  background-color: #f3e5f5;
+  border: 2px dashed #673ab7;
   border-radius: 8px;
-  color: #673ab7; /* Mismo color que el encabezado */
-  font-size: 16px; /* Tamaño de fuente similar al resto */
+  color: #673ab7;
+  font-size: 16px;
   text-align: center;
   margin: 20px auto;
   padding: 10px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-}
-
-.no-pokemons p {
-  margin: 0;
-  font-weight: bold;
 }

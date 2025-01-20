@@ -4,21 +4,15 @@
       @for (pokemon of initialPokemons; track pokemon.id) {
         <div 
           class="pokemon-card" 
-          [class.selected]="selectedPokemon?.id === pokemon.id"
-          (click)="selectPokemon(pokemon)"
+          [style.--pokemon-color]="pokemon.color || defaultColor"
+          (click)="openPokemonModal(pokemon)"
         >
-          <img [src]="pokemon.sprite" [alt]="pokemon.name">
-          <h3>{{ pokemon.name }}</h3>
-          <p>{{ pokemon.description }}</p>
+          <div class="card-content">
+            <h3>{{ pokemon.name }}</h3>
+            <img [src]="pokemon.sprite" [alt]="pokemon.name">
+            <p>{{ pokemon.description }}</p>
+          </div>
         </div>
       }
     </div>
-    <button 
-      mat-raised-button 
-      color="primary" 
-      (click)="confirmSelection()"
-      [disabled]="!selectedPokemon"
-    >
-      Elegir Pokémon
-    </button>
   </div>

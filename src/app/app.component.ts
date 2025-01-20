@@ -7,7 +7,9 @@ import { HeaderComponent } from './core/components/header/header.component';
     selector: 'app-root',
     imports: [RouterOutlet, HeaderComponent, FooterComponent],
     templateUrl: './app.component.html',
-    styleUrl: './app.component.css'
+    styleUrl: './app.component.css',
+    host: {
+    '[attr.aria-hidden]': 'false'}
 })
 export class AppComponent {
   title = 'pokedex';

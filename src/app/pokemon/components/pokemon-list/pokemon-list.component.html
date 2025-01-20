@@ -34,8 +34,8 @@
         <mat-grid-tile (click)="openPokemonModal(pokemon)">
           <mat-card class="pokemon-card" appearance="outlined" [ngStyle]="getCardStyle(pokemon.id)">
             <mat-card-content class="card-content">
-              <img [src]="pokemon.sprites.front_default" alt="{{ pokemon.name }}" />
               <h2 [ngStyle]="getTextStyle(pokemon.id)">{{ pokemon.name }}</h2>
+              <img [src]="pokemon.sprites.front_default" alt="{{ pokemon.name }}" />
             </mat-card-content>
           </mat-card>
         </mat-grid-tile>

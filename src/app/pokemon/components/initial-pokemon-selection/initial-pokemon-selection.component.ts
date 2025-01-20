@@ -1,27 +1,45 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { PokemonService } from '../../../services/pokemon/pokemon.service';
 import { PokemonCapturedStateService } from '../../../services/pokemon-captured-state.service';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Router } from '@angular/router';
 import { AuthService } from '../../../services/auth/auth.service';
-import { DialogConfirmationComponent } from '../../dialog-confirmation/dialog-confirmation.component';
 import { MatDialog } from '@angular/material/dialog';
 import { MaterialsModule } from '../../../materials/materials.module';
-
+import { ModalComponent } from '../modal/modal.component';
+import { DialogConfirmationComponent } from '../../dialog-confirmation/dialog-confirmation.component';
+import { Subject, takeUntil } from 'rxjs';
 
 interface InitialPokemon {
   id: number;
   name: string;
   sprite: string;
   description: string;
+  color?: string;
 }
+
 @Component({
   selector: 'app-initial-pokemon-selection',
   imports: [MaterialsModule],
   templateUrl: './initial-pokemon-selection.component.html',
   styleUrl: './initial-pokemon-selection.component.css'
 })
-export class InitialPokemonSelectionComponent implements OnInit {
+export class InitialPokemonSelectionComponent implements OnInit,OnDestroy {
+  private destroy$ = new Subject<void>();
+  defaultColor: string = '#939393';
+  private colorMap: { [key: string]: string } = {
+    black: '#454545',
+    blue: '#4F61D6',
+    brown: '#96774F',
+    gray: '#939393',
+    green: '#41A13A',
+    pink: '#FFD0EF',
+    purple: '#8E77B3',
+    red: '#FF3333',
+    white: '#F5F5F5',
+    yellow: '#FFE633'
+  };
+
   initialPokemons: InitialPokemon[] = [
     { 
       id: 7, 
@@ -53,69 +71,67 @@ export class InitialPokemonSelectionComponent implements OnInit {
 
   constructor(
     private pokemonService: PokemonService,
-    private pokemonCapturedStateService:PokemonCapturedStateService,
+    private pokemonCapturedStateService: PokemonCapturedStateService,
     private authService: AuthService,
     private router: Router,
     private dialog: MatDialog,
     private snackBar: MatSnackBar
-
   ) {}
 
   ngOnInit() {
     // Cargar detalles de los Pokémon
     this.initialPokemons.forEach(pokemon => {
-      this.pokemonService.getPokemonByNameOrId(pokemon.id.toString()).subscribe({
-        next: (details) => {
-          pokemon.sprite = details.sprites.front_default;
-        },
-        error: (error) => {
-          console.error(`Error cargando detalles de ${pokemon.name}`, error);
-        }
-      });
+      this.loadPokemonDetails(pokemon);
     });
   }
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
+  }
+  loadPokemonDetails(pokemon: InitialPokemon) {
+    this.pokemonService.getPokemonByNameOrId(pokemon.id.toString()).subscribe({
+      next: (details) => {
+        pokemon.sprite = details.sprites.front_default;
+        this.loadPokemonColor(pokemon);
+      },
+      error: (error) => {
+        console.error(`Error cargando detalles de ${pokemon.name}`, error);
+      }
+    });
+  }
+
+  loadPokemonColor(pokemon: InitialPokemon) {
+    this.pokemonService.getPokemonSpecies(pokemon.id.toString())
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (speciesResponse) => {
+          const colorName = speciesResponse.color.name.toLowerCase();
+          pokemon.color = this.colorMap[colorName] || this.defaultColor;
+        },
+        error: (err) => {
+          console.error('Error al cargar el color del Pokémon:', err);
+          pokemon.color = this.defaultColor;
+        }
+      });
+  }
+
 
   selectPokemon(pokemon: InitialPokemon) {
     this.selectedPokemon = pokemon;
   }
 
-  confirmSelection() {
-    if (!this.selectedPokemon) return;
-
-    const dialogRef = this.dialog.open(DialogConfirmationComponent, {
-      data: {
-        message: `¿Estás seguro de elegir a ${this.selectedPokemon.name} como tu Pokémon inicial?`
-      }
+  openPokemonModal(pokemon: InitialPokemon) {
+    const dialogRef = this.dialog.open(ModalComponent, {
+      data: { id: pokemon.id }
     });
-
-    dialogRef.afterClosed().subscribe(confirmed => {
-      if (confirmed) {
-        this.pokemonService.addPokemon(this.selectedPokemon!.id).subscribe({
-          next: () => {
-            // Resetear estado de nuevo usuario
-            this.authService.resetNewUserStatus();
-            if (this.selectedPokemon) {
-              this.pokemonCapturedStateService.incrementCapturedPokemons();
-            }
-            this.snackBar.open(
-              `¡${this.selectedPokemon!.name} ha sido agregado a tu equipo!`,
-              'Cerrar',
-              { duration: 5000 }
-            );
-
-            // Redirigir al home
-            this.router.navigate(['/home']);
-          },
-          error: (error) => {
-            console.error('Error al agregar Pokémon inicial', error);
-            this.snackBar.open(
-              'Hubo un error al seleccionar tu Pokémon inicial',
-              'Cerrar',
-              { duration: 5000 }
-            );
-          }
-        });
+    this.pokemonCapturedStateService.capturedPokemons$.subscribe({
+      next: (count) => {
+        if (count > 0) {
+          // Redirigir al home
+          this.router.navigate(['/home']);
+         }
       }
     });
   }
+
 }

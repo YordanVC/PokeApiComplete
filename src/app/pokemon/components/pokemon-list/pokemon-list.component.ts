@@ -125,7 +125,7 @@ export class PokemonListComponent implements OnInit, OnDestroy {
   getCardStyle(pokemonId: number) {
     const color = this.pokemonColors[pokemonId] || this.defaultColor;
     return {
-      'background-color': color,
+      '--pokemon-color': color,
       'transition': 'all 0.3s ease',
       'box-shadow': '0 2px 4px rgba(0,0,0,0.2)'
     };
@@ -134,9 +134,13 @@ export class PokemonListComponent implements OnInit, OnDestroy {
   getTextStyle(pokemonId: number) {
     const color = this.pokemonColors[pokemonId] || this.defaultColor;
     return {
-      'color': this.isLightColor(color) ? '#000000' : '#ffffff'
+      'background-color': 'white',
+      'color': '#2d2d2d',
+      'padding': '5px 10px',
+      'border-radius': '8px',
+      'margin-bottom': '8px'
     };
-  }
+}
 
   private isLightColor(color: string): boolean {
     if (!color) return true; // Valor por defecto si no hay color
