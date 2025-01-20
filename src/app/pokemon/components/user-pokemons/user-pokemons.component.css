@@ -36,3 +36,23 @@
 .mat-mdc-cell button {
   margin: 0 auto;
 }
+.no-pokemons {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 200px; /* Ajusta según tu necesidad */
+  background-color: #f3e5f5; /* Un tono suave de morado para coherencia */
+  border: 2px dashed #673ab7; /* Bordes para destacar el mensaje */
+  border-radius: 8px;
+  color: #673ab7; /* Mismo color que el encabezado */
+  font-size: 16px; /* Tamaño de fuente similar al resto */
+  text-align: center;
+  margin: 20px auto;
+  padding: 10px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.no-pokemons p {
+  margin: 0;
+  font-weight: bold;
+}

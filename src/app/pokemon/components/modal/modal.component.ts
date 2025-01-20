@@ -1,18 +1,20 @@
-import { Component, Inject, OnInit, Optional } from '@angular/core';
+import { ChangeDetectionStrategy, Component, Inject, OnInit, Optional } from '@angular/core';
 import { MaterialsModule } from '../../../materials/materials.module';
-import { MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { CommonModule } from '@angular/common';
 import { PokemonService } from '../../../services/pokemon/pokemon.service';
-import { Pokemon } from '../../../models/pokemon';
+import { MyPokemonsResponse, Pokemon } from '../../../models/pokemon';
 import { PokemonStatsComponent } from '../../../shared/pokemon-stats/pokemon-stats.component';
-import { HeaderComponent } from '../../../core/components/header/header.component';
+import { PokemonCapturedStateService } from '../../../services/pokemon-captured-state.service';
+import { DialogConfirmationComponent } from '../../dialog-confirmation/dialog-confirmation.component';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 
 @Component({
-    selector: 'app-modal',
-    imports: [MaterialsModule,PokemonStatsComponent,CommonModule],
-    templateUrl: './modal.component.html',
-    styleUrl: './modal.component.css'
+  selector: 'app-modal',
+  imports: [MaterialsModule, PokemonStatsComponent, CommonModule],
+  templateUrl: './modal.component.html',
+  styleUrl: './modal.component.css',
 })
 
 export class ModalComponent implements OnInit {
@@ -25,7 +27,8 @@ export class ModalComponent implements OnInit {
   abilities: string[] = [];
   isLoading: boolean = true;
   mainColor: string = '';
-
+  capturedPokemonsList: MyPokemonsResponse[] = [];
+  
   private typeColorMap: { [key: string]: string } = {
     normal: '#A8A878',
     fire: '#F08030',
@@ -63,11 +66,21 @@ export class ModalComponent implements OnInit {
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: { id: number },
     private pokemonService: PokemonService,
+    private pokemonCapturedStateService: PokemonCapturedStateService,
+    private dialogRef: MatDialogRef<ModalComponent>,
+    private dialog: MatDialog,
+    private snackBar: MatSnackBar
   ) { }
 
   ngOnInit() {
     const pokemonId = Number(this.data.id);
     this.loadPokemonDetails(pokemonId);
+
+    this.pokemonCapturedStateService.capturedPokemonsList$.subscribe(
+      pokemons => {
+        this.capturedPokemonsList = pokemons;
+      }
+    );
   }
 
   loadPokemonDetails(pokemonId: number) {
@@ -121,22 +134,87 @@ export class ModalComponent implements OnInit {
     });
   }
 
-  addPokemon() {
-    const pokemonId = this.data.id; 
-    this.pokemonService.addPokemon(pokemonId).subscribe({
-      next: (result) => {
-        if (result) {
-          console.log('Pokémon agregado exitosamente');
-          // Aquí puedes cerrar el modal o mostrar un mensaje de éxito
-        } else {
-          console.error('No se pudo agregar el Pokémon');
-        }
-      },
-      error: (error) => {
-        console.error('Error al agregar Pokémon', error);
+addPokemon() {
+   // Verificar si el Pokémon ya está capturado
+   const isPokemonAlreadyCaptured = this.capturedPokemonsList.some(
+    pokemon => pokemon.pokemonId === this.data.id
+  );
+
+  if (isPokemonAlreadyCaptured) {
+    this.dialogRef.close();
+    this.snackBar.open(
+      `¡${this.pokemon?.name || 'Este Pokémon'} ya está en tu equipo!`,
+      'Cerrar',
+      {
+        duration: 5000,
+        panelClass: ['custom-snackbar'],
       }
-    });
+    );
+    return;
   }
+
+  // Verificar si ya tiene el máximo de Pokémon
+  if (this.capturedPokemonsList.length >= 6) {
+    this.dialogRef.close();
+    this.snackBar.open(
+      'No puedes capturar más Pokémon. Ya tienes el máximo permitido (6).',
+      'Cerrar',
+      { duration: 5000 }
+      
+    );
+    return;
+  }
+
+  // Usar el diálogo de confirmación existente
+  const dialogRef = this.dialog.open(DialogConfirmationComponent, {
+    data: {
+      pokemonName: this.pokemon?.name || 'Pokémon'
+    }
+  });
+
+  dialogRef.afterClosed().subscribe((confirmed: boolean) => {
+    if (confirmed) {
+      const pokemonId = this.data.id;
+      this.pokemonService.addPokemon(pokemonId).subscribe({
+        next: (response) => {
+          if (response) {
+            // Cargar el Pokémon recién capturado
+            this.pokemonService.getUserPokemons().subscribe({
+              next: (pokemons) => {
+                // Buscar el Pokémon recién capturado
+                const newPokemon = pokemons.find(p => p.pokemonId === pokemonId);
+                
+                if (newPokemon) {
+                  // Agregar el Pokémon al servicio de estado
+                  this.pokemonCapturedStateService.addCapturedPokemon(newPokemon);
+                }
+              },
+              error: (error) => {
+                console.error('Error al cargar los Pokémon', error);
+              }
+            });
+
+            this.dialogRef.close({ success: true, pokemonId });
+            this.snackBar.open(
+              `¡${this.pokemon?.name} ha sido agregado a tu equipo!`,
+              'Cerrar',
+              { duration: 5000 }
+            );
+          } else {
+            console.error('No se pudo agregar el Pokémon');
+          }
+        },
+        error: (error) => {
+          this.snackBar.open(
+            'Hubo un error al intentar capturar el Pokémon.',
+            'Cerrar',
+            { duration: 5000 }
+          );
+        }
+      });
+    }
+  });
+}
   //metodos de estilos
   getBackgroundStyle() {
     return {

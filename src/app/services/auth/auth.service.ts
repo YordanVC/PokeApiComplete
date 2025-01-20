@@ -1,8 +1,9 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
-import { Observable, tap } from 'rxjs';
+import { BehaviorSubject, Observable, tap } from 'rxjs';
 import { UniversalStorageService } from '../localStorage/universal-storage.service';
+import { PokemonCapturedStateService } from '../pokemon-captured-state.service';
 
 @Injectable({
   providedIn: 'root'
@@ -10,11 +11,13 @@ import { UniversalStorageService } from '../localStorage/universal-storage.servi
 export class AuthService {
   private apiUrl = 'http://localhost:8080/pokedex';
   private tokenKey = 'authToken'
+  private authenticatedSubject = new BehaviorSubject<boolean>(false); // Estado inicial
+  isAuthenticated$ = this.authenticatedSubject.asObservable();
 
   constructor(private httpClient: HttpClient,
     private router: Router,
-    private storageService: UniversalStorageService
-  ) { }
+    private storageService: UniversalStorageService,
+  ) { this.setAuthenticated(this.isAuthenticated()); }
 
   login(username: string, password: string): Observable<any> {
     return this.httpClient.post<any>(`${this.apiUrl}/user/login`, { username, password }, { observe: 'response' }).pipe(
@@ -22,6 +25,7 @@ export class AuthService {
         const token = response.headers.get('Authorization');
         if (token) {
           this.setToken(token);
+          this.setAuthenticated(this.isAuthenticated());
           console.log('Token:', token);
         } else {
           console.error('No existe token en la respuesta del servidor');
@@ -29,6 +33,14 @@ export class AuthService {
         }
       })
     );
+  }
+
+  setAuthenticated(isAuthenticated: boolean) {
+    this.authenticatedSubject.next(isAuthenticated);
+  }
+
+  getAuthenticated(): boolean {
+    return this.authenticatedSubject.value;
   }
 
   register(username: string, email: string, password: string): Observable<void> {
@@ -40,37 +52,37 @@ export class AuthService {
   }
 
   public getToken(): string | null {
-    return this.storageService.getItem(this.tokenKey);
+    const token = this.storageService.getItem(this.tokenKey);
+    return token;
   }
 
   logout(): void {
     this.storageService.removeItem(this.tokenKey);
     this.router.navigate(['/login']);
   }
+
   isAuthenticated(): boolean {
     const token = this.getToken();
-
     if (!token) {
       return false;
     }
-
-    try {
-      // En tu caso, el token no parece ser un JWT estándar
-      // Podrías necesitar un método diferente para decodificar
-      const payload = this.decodeToken(token);
-
-      // Si no hay expiración, asumir que el token es válido
-      if (!payload.exp) {
-        return true;
+  
+    const payload = this.decodeToken(token);
+  
+    // Asegúrate de que el payload contiene el campo exp
+    if (payload.exp) {
+      const exp = payload.exp * 1000;  // Convertir el tiempo de expiración a milisegundos
+      
+      // Comparar la fecha de expiración con el tiempo actual
+      if (Date.now() > exp) {
+        return false;
       }
-
-      const exp = payload.exp * 1000;
-      return Date.now() < exp;
-    } catch (error) {
-      console.error('Error al validar token', error);
-      return false;
+    } else {
     }
+    // Si no hay expiración, o la expiración es válida
+    return true;
   }
+  
 
   private decodeToken(token: string): any {
     try {

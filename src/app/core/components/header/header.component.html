@@ -7,7 +7,7 @@
     <div class="button-container">
         @if (authService.isAuthenticated()) {
             <div class="pokemon-cart">
-                <button  class="pokedex-button"(click)="openPokemonDialog()"  mat-raised-button [matBadge]="myPokemons.length" aria-label="Mis pokemons" matTooltip="Pokedex">
+                <button  class="pokedex-button"(click)="openPokemonDialog()"  mat-raised-button [matBadge]="capturedPokemonsCount" aria-label="Mis pokemons" matTooltip="Pokedex">
                     <img class="pokedex-img" src="assets/pokeball.png">
                 </button>   
             </div>

@@ -20,6 +20,7 @@ export class UniversalStorageService {
   getItem(key: string): string | null {
     if (isPlatformBrowser(this.platformId)) {
       return localStorage.getItem(key);
+      
     } else {
       return this.storage.get(key) || null;
     }

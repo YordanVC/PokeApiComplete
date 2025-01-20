@@ -24,6 +24,7 @@ export class LoginComponent {
     this.authService.login(this.username, this.password).subscribe({
       next: () => {
         this.loginValid = true;
+        this.authService.setAuthenticated(true)
         this.router.navigate(['/home']);
       },
       error: (err: any) => {
