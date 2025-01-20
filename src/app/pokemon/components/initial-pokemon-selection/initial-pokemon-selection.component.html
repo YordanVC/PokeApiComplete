@@ -1,0 +1,24 @@
+<div class="initial-pokemon-container">
+    <h2>Elige tu Pokémon inicial</h2>
+    <div class="pokemon-grid">
+      @for (pokemon of initialPokemons; track pokemon.id) {
+        <div 
+          class="pokemon-card" 
+          [class.selected]="selectedPokemon?.id === pokemon.id"
+          (click)="selectPokemon(pokemon)"
+        >
+          <img [src]="pokemon.sprite" [alt]="pokemon.name">
+          <h3>{{ pokemon.name }}</h3>
+          <p>{{ pokemon.description }}</p>
+        </div>
+      }
+    </div>
+    <button 
+      mat-raised-button 
+      color="primary" 
+      (click)="confirmSelection()"
+      [disabled]="!selectedPokemon"
+    >
+      Elegir Pokémon
+    </button>
+  </div>

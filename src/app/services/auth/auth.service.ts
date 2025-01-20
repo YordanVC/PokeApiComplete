@@ -13,11 +13,25 @@ export class AuthService {
   private tokenKey = 'authToken'
   private authenticatedSubject = new BehaviorSubject<boolean>(false); // Estado inicial
   isAuthenticated$ = this.authenticatedSubject.asObservable();
+  private newUserKey = 'isNewUser';
 
   constructor(private httpClient: HttpClient,
     private router: Router,
     private storageService: UniversalStorageService,
   ) { this.setAuthenticated(this.isAuthenticated()); }
+
+  // Métodos para manejar el estado de nuevo usuario
+  setNewUserStatus() {
+    this.storageService.setItem(this.newUserKey, 'true');
+  }
+
+  isNewUser(): boolean {
+    return this.storageService.getItem(this.newUserKey) === 'true';
+  }
+
+  resetNewUserStatus() {
+    this.storageService.removeItem(this.newUserKey);
+  }
 
   login(username: string, password: string): Observable<any> {
     return this.httpClient.post<any>(`${this.apiUrl}/user/login`, { username, password }, { observe: 'response' }).pipe(
@@ -26,7 +40,6 @@ export class AuthService {
         if (token) {
           this.setToken(token);
           this.setAuthenticated(this.isAuthenticated());
-          console.log('Token:', token);
         } else {
           console.error('No existe token en la respuesta del servidor');
           console.log('Token:', token);
@@ -45,7 +58,12 @@ export class AuthService {
 
   register(username: string, email: string, password: string): Observable<void> {
     const user = { username, email, password };
-    return this.httpClient.post<void>(`${this.apiUrl}/user/register`, user);
+    return this.httpClient.post<void>(`${this.apiUrl}/user/register`, user).pipe(
+      tap(() => {
+        // Marcar como nuevo usuario después del registro
+        this.setNewUserStatus();
+      })
+    );
   }
   private setToken(token: string): void {
     this.storageService.setItem(this.tokenKey, token);
@@ -58,6 +76,7 @@ export class AuthService {
 
   logout(): void {
     this.storageService.removeItem(this.tokenKey);
+    this.storageService.removeItem(this.newUserKey);
     this.router.navigate(['/login']);
   }
 

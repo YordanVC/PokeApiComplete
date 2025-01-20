@@ -5,6 +5,7 @@ import { LoginComponent } from './shared/components/login/login.component';
 import { authGuard } from './guard/auth.guard';
 import { athenticatedGuard } from './guard/athenticated.guard';
 import { RegisterComponent } from './shared/components/register/register.component';
+import { InitialPokemonSelectionComponent } from './pokemon/components/initial-pokemon-selection/initial-pokemon-selection.component';
 export const routes: Routes = [
     {
         path: 'login',
@@ -15,6 +16,11 @@ export const routes: Routes = [
         path: 'register',
         component: RegisterComponent,
         canActivate:[athenticatedGuard]
+    },
+    {
+        path: 'initial-pokemon', 
+        component: InitialPokemonSelectionComponent,
+        canActivate: [authGuard]
     },
     {
         path: 'home',

@@ -25,7 +25,14 @@ export class LoginComponent {
       next: () => {
         this.loginValid = true;
         this.authService.setAuthenticated(true)
-        this.router.navigate(['/home']);
+        // Verificar si es un nuevo usuario
+        if (this.authService.isNewUser()) {
+          // Redirigir a la selección de Pokémon inicial
+          this.router.navigate(['/initial-pokemon']);
+        } else {
+          // Redirigir al home normal
+          this.router.navigate(['/home']);
+        }
       },
       error: (err: any) => {
         console.error('Login failed ', err)
